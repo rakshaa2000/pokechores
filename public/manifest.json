@@ -1,0 +1,15 @@
+{
+  "short_name": "PokeCare",
+  "name": "PokeCare",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#4f46e5",
+  "background_color": "#0f172a"
+}

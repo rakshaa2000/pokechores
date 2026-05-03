@@ -1,0 +1,125 @@
+.pokemon-collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.collection-card {
+  position: relative;
+  background: rgba(30, 41, 59, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+.collection-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2), 0 0 10px var(--card-color);
+}
+
+.collection-card.is-buddy {
+  border-color: #ffd700;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+  cursor: default;
+  transform: none;
+}
+
+.card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.1;
+  z-index: 0;
+  transition: opacity 0.2s ease;
+}
+
+.collection-card:hover .card-bg {
+  opacity: 0.2;
+}
+
+.buddy-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ffd700;
+  color: #000;
+  font-size: 0.6rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.collection-sprite {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  z-index: 1;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+  transition: transform 0.3s ease;
+}
+
+.collection-card:hover .collection-sprite {
+  transform: scale(1.1);
+}
+
+.collection-info {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.collection-name {
+  font-size: 0.9rem;
+  color: #fff;
+  margin-bottom: 0.25rem;
+  display: block;
+  text-transform: capitalize;
+}
+
+.collection-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.collection-level {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: bold;
+}
+
+.collection-types {
+  display: flex;
+  gap: 0.25rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.type-badge.small {
+  font-size: 0.6rem;
+  padding: 2px 6px;
+}
+
+.collection-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}

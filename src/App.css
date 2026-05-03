@@ -1,0 +1,182 @@
+.app-container {
+  min-height: 100vh;
+  padding: 1rem;
+  max-width: 1152px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .app-container {
+    padding: 2rem;
+  }
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.icon-wrapper {
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.icon.small {
+  width: 1rem;
+  height: 1rem;
+}
+
+.icon.gold {
+  color: #fbbf24;
+}
+
+.title-gradient {
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  background: linear-gradient(to right, #60a5fa, #34d399);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.xp-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.xp-text {
+  font-family: monospace;
+  font-size: 0.875rem;
+  color: #fef3c7;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  flex: 1;
+}
+
+@media (min-width: 1024px) {
+  .main-grid {
+    grid-template-columns: 5fr 7fr;
+  }
+}
+
+@media (min-width: 1280px) {
+  .main-grid {
+    grid-template-columns: 4fr 8fr;
+  }
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.stats-panel {
+  padding: 1.5rem;
+}
+
+.stats-title {
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  color: #d1d5db;
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.stat-value {
+  font-family: monospace;
+  color: white;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.25rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+  backdrop-filter: blur(12px);
+  width: fit-content;
+}
+
+.tab-button {
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  transition: all 0.2s;
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+.tab-button:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-button.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.chore-list-wrapper {
+  flex: 1;
+  height: 500px;
+}
