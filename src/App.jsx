@@ -12,38 +12,6 @@ import ProgressBanner from './components/ProgressBanner';
 import { Sparkles, Trophy } from 'lucide-react';
 import './App.css';
 
-const QUIRKY_TASKS = [
-  { text: "Hydrate or diedrate (Drink water)", xp: 15, label: "Self Care" },
-  { text: "Stretch like a sleepy Meowth", xp: 10, label: "Zen Mode" },
-  { text: "Eat a vegetable (fries don't count)", xp: 20, label: "Brain Fuel" },
-  { text: "Step outside and touch some grass", xp: 15, label: "Zen Mode" },
-  { text: "5 minutes of deep breathing", xp: 10, label: "Zen Mode" },
-  { text: "Wipe down a surface that looks sad", xp: 20, label: "Adulting" },
-  { text: "Unclench your jaw & drop shoulders", xp: 5, label: "Self Care" },
-  { text: "Do a silly little dance", xp: 10, label: "Brain Fuel" }
-];
-
-const getRandomTasks = (count) => {
-  const shuffled = [...QUIRKY_TASKS].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count).map(t => ({
-    ...t,
-    id: Date.now() + Math.random(),
-    completed: false
-  }));
-};
-
-const simulateTaskApi = async () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        daily: getRandomTasks(1)[0],
-        weekly: getRandomTasks(1)[0],
-        monthly: getRandomTasks(1)[0]
-      });
-    }, 500); // 500ms delay to simulate network
-  });
-};
-
 function App() {
   const { 
     pokemonId, 
@@ -82,7 +50,7 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  const [activeTab, setActiveTab] = useState('buddy');
+  const [activeTab, setActiveTab] = useState('daily');
   const [snackbarMsg, setSnackbarMsg] = useState(null);
   const [showEncounterSplash, setShowEncounterSplash] = useState(false);
   const prevBossRef = React.useRef(null);
@@ -101,17 +69,14 @@ function App() {
     prevBossRef.current = activeBoss;
   }, [activeBoss]);
 
-  // Check-in, Fetch API tasks, and Recurrence Logic on app load
+  // Check-in and Recurrence Logic on app load
   useEffect(() => {
     const todayStr = new Date().toISOString().split('T')[0];
     const savedCheckins = JSON.parse(localStorage.getItem('poke_checkins') || '[]');
 
-    let shouldFetch = false;
-
     if (!savedCheckins.includes(todayStr)) {
       const newCheckins = [...savedCheckins, todayStr];
       setCheckIns(newCheckins);
-      shouldFetch = true;
     } else {
       setCheckIns(savedCheckins);
     }
@@ -152,39 +117,20 @@ function App() {
       }
     });
 
-    if (shouldFetch || respawnedTasks.daily.length > 0 || respawnedTasks.weekly.length > 0 || respawnedTasks.monthly.length > 0) {
-      if (shouldFetch) {
-        simulateTaskApi().then(newTasks => {
-          setChores(prev => {
-            const addUnique = (existing, incoming) => {
-              const res = [...incoming];
-              existing.forEach(e => { if (!res.some(r => r.text === e.text)) res.push(e); });
-              return res;
-            };
-            return {
-              daily: addUnique(prev.daily, [newTasks.daily, ...respawnedTasks.daily]),
-              weekly: addUnique(prev.weekly, [newTasks.weekly, ...respawnedTasks.weekly]),
-              monthly: addUnique(prev.monthly, [newTasks.monthly, ...respawnedTasks.monthly])
-            };
-          });
-          setArchive(tasksToKeepInArchive);
-          setSnackbarMsg("A wild task appeared!");
-        });
-      } else {
-        setChores(prev => {
-          const addUnique = (existing, incoming) => {
-            const res = [...incoming];
-            existing.forEach(e => { if (!res.some(r => r.text === e.text)) res.push(e); });
-            return res;
-          };
-          return {
-            daily: addUnique(prev.daily, respawnedTasks.daily),
-            weekly: addUnique(prev.weekly, respawnedTasks.weekly),
-            monthly: addUnique(prev.monthly, respawnedTasks.monthly)
-          };
-        });
-        setArchive(tasksToKeepInArchive);
-      }
+    if (respawnedTasks.daily.length > 0 || respawnedTasks.weekly.length > 0 || respawnedTasks.monthly.length > 0) {
+      setChores(prev => {
+        const addUnique = (existing, incoming) => {
+          const res = [...incoming];
+          existing.forEach(e => { if (!res.some(r => r.text === e.text)) res.push(e); });
+          return res;
+        };
+        return {
+          daily: addUnique(prev.daily, respawnedTasks.daily),
+          weekly: addUnique(prev.weekly, respawnedTasks.weekly),
+          monthly: addUnique(prev.monthly, respawnedTasks.monthly)
+        };
+      });
+      setArchive(tasksToKeepInArchive);
     }
 
   }, []);
