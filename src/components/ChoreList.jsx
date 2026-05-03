@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Circle, Plus, Trash2, Calendar as CalendarIcon, Bell, Tag } from 'lucide-react';
+import { CheckCircle2, Circle, Plus, Trash2, Calendar as CalendarIcon, Bell, Tag, Settings } from 'lucide-react';
 import './ChoreList.css';
 
 const PRESET_LABELS = [
@@ -115,8 +115,9 @@ export default function ChoreList({ type, chores, onAdd, onToggle, onDelete }) {
             type="button"
             className={`options-toggle-btn ${showOptions ? 'active' : ''}`}
             onClick={() => setShowOptions(!showOptions)}
+            title="Quest Options"
           >
-            Options
+            <Settings size={18} />
           </button>
           <button 
             type="submit"

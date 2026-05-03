@@ -61,6 +61,13 @@ body {
   letter-spacing: 1px;
 }
 
+@media (max-width: 480px) {
+  .retro-text {
+    font-size: 0.75rem !important;
+    letter-spacing: 0.5px;
+  }
+}
+
 /* Animations */
 @keyframes float {
   0% { transform: translateY(0px); }

@@ -7,6 +7,8 @@ import BossBattle from './components/BossBattle';
 import Snackbar from './components/Snackbar';
 import CheckInCalendar from './components/CheckInCalendar';
 import TaskArchive from './components/TaskArchive';
+import WildEncounterSplash from './components/WildEncounterSplash';
+import ProgressBanner from './components/ProgressBanner';
 import { Sparkles, Trophy } from 'lucide-react';
 import './App.css';
 
@@ -80,8 +82,24 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
-  const [activeTab, setActiveTab] = useState('daily');
+  const [activeTab, setActiveTab] = useState('buddy');
   const [snackbarMsg, setSnackbarMsg] = useState(null);
+  const [showEncounterSplash, setShowEncounterSplash] = useState(false);
+  const prevBossRef = React.useRef(null);
+
+  // Encounter & Catch Logic
+  useEffect(() => {
+    if (activeBoss && !prevBossRef.current) {
+      setShowEncounterSplash(true);
+      setTimeout(() => setShowEncounterSplash(false), 3500);
+    }
+    
+    if (!activeBoss && prevBossRef.current && prevBossRef.current.currentHp <= 0) {
+      setSnackbarMsg(`Gotcha! ${prevBossRef.current.data.name} was caught!`);
+    }
+    
+    prevBossRef.current = activeBoss;
+  }, [activeBoss]);
 
   // Check-in, Fetch API tasks, and Recurrence Logic on app load
   useEffect(() => {
@@ -105,19 +123,15 @@ function App() {
     let tasksToKeepInArchive = [];
 
     archive.forEach(task => {
-      // Check if task has expired based on "until" date
       if (task.deadline && new Date(task.deadline).getTime() < now) {
-        tasksToKeepInArchive.push(task); // Keep it in archive, but it won't respawn
+        tasksToKeepInArchive.push(task);
         return;
       }
 
-      // Check recurrence
       const timeSinceCompletion = now - task.completedAt;
       let shouldRespawn = false;
 
       if (task.type === 'daily' && timeSinceCompletion > msPerDay * 0.5) {
-        // If completed more than 12 hours ago (roughly "yesterday"), it's eligible
-        // A better check is if completion date string != todayStr
         const completedDateStr = new Date(task.completedAt).toISOString().split('T')[0];
         if (completedDateStr !== todayStr) shouldRespawn = true;
       } else if (task.type === 'weekly' && timeSinceCompletion > msPerDay * 7) {
@@ -127,7 +141,6 @@ function App() {
       }
 
       if (shouldRespawn) {
-        // Create a fresh copy
         respawnedTasks[task.type].push({
           ...task,
           id: Date.now() + Math.random(),
@@ -143,7 +156,6 @@ function App() {
       if (shouldFetch) {
         simulateTaskApi().then(newTasks => {
           setChores(prev => {
-            // Prevent duplicate text in the same category
             const addUnique = (existing, incoming) => {
               const res = [...incoming];
               existing.forEach(e => { if (!res.some(r => r.text === e.text)) res.push(e); });
@@ -175,14 +187,13 @@ function App() {
       }
     }
 
-  }, []); // Run only once on mount
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('poke_chores', JSON.stringify(chores));
     localStorage.setItem('poke_checkins', JSON.stringify(checkIns));
     localStorage.setItem('poke_archive', JSON.stringify(archive));
     
-    // Check reminders (simple check on load/update)
     const now = new Date();
     let foundReminder = false;
     
@@ -191,7 +202,6 @@ function App() {
         const deadlineDate = new Date(chore.deadline);
         const timeDiff = deadlineDate - now;
         
-        // Due within 4 hours
         if (timeDiff > 0 && timeDiff < 4 * 60 * 60 * 1000) {
           setSnackbarMsg(`Reminder: "${chore.text}" is due soon!`);
           foundReminder = true;
@@ -239,7 +249,6 @@ function App() {
       return { ...prev, [type]: newChores };
     });
 
-    // Schedule removal and add to archive
     setTimeout(() => {
       setArchive(prev => [{ ...targetChore, completedAt: Date.now(), type }, ...prev]);
       handleDeleteChore(type, id);
@@ -254,7 +263,11 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <div className={`app-container main-tab-${activeTab === 'daily' || activeTab === 'weekly' || activeTab === 'monthly' ? 'quests' : activeTab}`}>
+      {showEncounterSplash && activeBoss && (
+        <WildEncounterSplash bossData={activeBoss.data} />
+      )}
+      
       <header className="app-header">
         <div className="logo-container">
           <div className="icon-wrapper">
@@ -269,8 +282,50 @@ function App() {
         </div>
       </header>
 
+      <ProgressBanner 
+        activeBoss={activeBoss} 
+        tasksUntilBoss={tasksUntilBoss} 
+      />
+
+      <nav className="mobile-nav">
+        <button 
+          className={activeTab === 'buddy' ? 'active' : ''} 
+          onClick={() => setActiveTab('buddy')}
+        >
+          <div className="nav-icon-wrapper">
+            <img 
+              src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/25.gif" 
+              alt="Buddy" 
+              className="nav-buddy-img"
+            />
+          </div>
+          <span>Buddy</span>
+        </button>
+        <button 
+          className={['daily', 'weekly', 'monthly'].includes(activeTab) ? 'active' : ''} 
+          onClick={() => setActiveTab('daily')}
+        >
+          <Sparkles size={20} />
+          <span>Quests</span>
+        </button>
+        <button 
+          className={activeTab === 'collection' ? 'active' : ''} 
+          onClick={() => setActiveTab('collection')}
+        >
+          <Trophy size={20} />
+          <span>Collection</span>
+        </button>
+        <button 
+          className={activeTab === 'archive' ? 'active' : ''} 
+          onClick={() => setActiveTab('archive')}
+        >
+          <Trophy size={20} className="icon-rotate" />
+          <span>Archive</span>
+        </button>
+      </nav>
+
       <main className="main-grid">
-        <div className="left-column">
+        <div className="left-column section-buddy">
           <ActivePokemon 
             pokemonData={pokemonData} 
             level={level} 
@@ -301,14 +356,6 @@ function App() {
                 <span className="stat-label">Buddy XP</span>
                 <span className="stat-value">{xp}</span>
               </div>
-              {!activeBoss && (
-                <div className="stat-row">
-                  <span className="stat-label">Next Encounter</span>
-                  <span className="stat-value">
-                    {tasksUntilBoss} {tasksUntilBoss === 1 ? 'task' : 'tasks'}
-                  </span>
-                </div>
-              )}
             </div>
           </div>
           
@@ -316,38 +363,52 @@ function App() {
         </div>
 
         <div className="right-column">
-          <BossBattle activeBoss={activeBoss} />
-          
-          <div className="tabs-container">
-            {['daily', 'weekly', 'monthly', 'collection', 'archive'].map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`tab-button ${activeTab === tab ? 'active' : ''}`}
-              >
-                {tab}
-              </button>
-            ))}
+          <div className="section-quests">
+            <BossBattle activeBoss={activeBoss} />
+            
+            <div className="tabs-container">
+              {['daily', 'weekly', 'monthly'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`tab-button ${activeTab === tab ? 'active' : ''}`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            <div className="chore-list-wrapper animate-pop-in">
+              {['daily', 'weekly', 'monthly'].includes(activeTab) ? (
+                <ChoreList 
+                  type={activeTab}
+                  chores={chores[activeTab]}
+                  onAdd={handleAddChore}
+                  onToggle={handleToggleChore}
+                  onDelete={handleDeleteChore}
+                />
+              ) : (
+                <ChoreList 
+                  type="daily"
+                  chores={chores.daily}
+                  onAdd={handleAddChore}
+                  onToggle={handleToggleChore}
+                  onDelete={handleDeleteChore}
+                />
+              )}
+            </div>
           </div>
 
-          <div className="chore-list-wrapper animate-pop-in">
-            {activeTab === 'collection' ? (
-              <PokemonCollection 
-                collection={collection} 
-                currentBuddyId={pokemonId} 
-                onChangeBuddy={changeBuddy} 
-              />
-            ) : activeTab === 'archive' ? (
-              <TaskArchive archive={archive} />
-            ) : (
-              <ChoreList 
-                type={activeTab}
-                chores={chores[activeTab]}
-                onAdd={handleAddChore}
-                onToggle={handleToggleChore}
-                onDelete={handleDeleteChore}
-              />
-            )}
+          <div className="section-collection">
+            <PokemonCollection 
+              collection={collection} 
+              currentBuddyId={pokemonId} 
+              onChangeBuddy={changeBuddy} 
+            />
+          </div>
+
+          <div className="section-archive">
+            <TaskArchive archive={archive} />
           </div>
         </div>
       </main>

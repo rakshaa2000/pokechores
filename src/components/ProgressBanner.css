@@ -1,0 +1,102 @@
+.progress-banner-container {
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+  z-index: 50;
+}
+
+.progress-banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.boss-active .progress-banner-content {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+}
+
+.banner-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #9ca3af;
+}
+
+.retro-text.small {
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+}
+
+.target-icon { color: #60a5fa; }
+.skull-icon { color: #ef4444; }
+
+.banner-count {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.count-val {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: white;
+  font-family: monospace;
+}
+
+.count-unit {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.banner-hp-bar {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.hp-pip {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  transform: rotate(45deg);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hp-pip.filled {
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+  border-color: transparent;
+}
+
+.hp-pip.empty {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.banner-boss-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+  text-transform: capitalize;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+@media (max-width: 480px) {
+  .progress-banner-content {
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem;
+  }
+  .banner-boss-name {
+    display: none; /* Hide name on very small screens to save space */
+  }
+}

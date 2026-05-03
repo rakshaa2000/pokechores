@@ -5,9 +5,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1.5rem;
   transition: all 0.5s ease;
-  min-height: 300px;
+  min-height: 250px;
+}
+
+@media (min-width: 640px) {
+  .active-pokemon-container {
+    padding: 2rem;
+    min-height: 300px;
+  }
 }
 
 .loading-state {
@@ -85,6 +92,16 @@
   color: #9ca3af;
 }
 
+@media (max-width: 480px) {
+  .pokemon-name {
+    font-size: 1rem !important;
+    word-break: break-word;
+  }
+  .pokemon-level {
+    font-size: 0.75rem;
+  }
+}
+
 .pokemon-types {
   display: flex;
   gap: 0.25rem;
@@ -103,12 +120,19 @@
 
 .sprite-container {
   position: relative;
-  height: 12rem;
+  height: 8rem;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin: 1rem 0;
+  margin: 0.5rem 0;
+}
+
+@media (min-width: 640px) {
+  .sprite-container {
+    height: 12rem;
+    margin: 1rem 0;
+  }
 }
 
 .evolution-overlay {

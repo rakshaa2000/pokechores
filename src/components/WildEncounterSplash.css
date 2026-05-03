@@ -1,0 +1,98 @@
+.encounter-splash-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: black;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: fade-out 0.5s ease-in forwards 3s;
+}
+
+.splash-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.2) 0%, rgba(0, 0, 0, 1) 70%);
+}
+
+.vs-lines {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  width: 200%;
+  height: 100px;
+  background: linear-gradient(90deg, transparent, white, transparent);
+  opacity: 0.1;
+  animation: line-slide 0.5s ease-out forwards;
+}
+
+@keyframes line-slide {
+  from { width: 0; opacity: 0; }
+  to { width: 200%; opacity: 0.1; }
+}
+
+.boss-reveal {
+  position: relative;
+  z-index: 2;
+  animation: pokemon-bounce 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.5s;
+  transform: scale(0);
+}
+
+.splash-boss-img {
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
+}
+
+.splash-text-container {
+  margin-top: 2rem;
+  text-align: center;
+  z-index: 3;
+  opacity: 0;
+  animation: fade-in-up 0.5s ease-out forwards 1.2s;
+}
+
+.splash-title {
+  font-size: 1.2rem;
+  color: #9ca3af;
+  margin: 0.5rem 0;
+}
+
+.boss-name-splash {
+  font-size: 2.5rem;
+  color: white;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  margin: 0.5rem 0;
+  text-transform: capitalize;
+}
+
+@keyframes pokemon-bounce {
+  from { transform: scale(0) rotate(15deg); }
+  to { transform: scale(1) rotate(0); }
+}
+
+@keyframes fade-in-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; pointer-events: none; }
+}
+
+/* Retro text fallback */
+.retro-text {
+  font-family: 'Press Start 2P', cursive;
+}
