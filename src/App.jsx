@@ -13,7 +13,6 @@ import Onboarding from './components/Onboarding';
 import WispsHunt from './components/WispsHunt';
 import QuickAdd from './components/QuickAdd';
 import Crafting from './components/Crafting';
-import Pastures from './components/Pastures';
 import { Sparkles, Trophy, Brush, X, Hammer, LayoutGrid } from 'lucide-react';
 import './App.css';
 
@@ -23,6 +22,7 @@ function App() {
     pokemonData,
     level,
     xp,
+    currentXp,
     trainerXp,
     loading,
     evolving,
@@ -71,8 +71,9 @@ function App() {
     const saved = localStorage.getItem('poke_research');
     return saved ? JSON.parse(saved) : {}; // { 'Wash Dishes': count }
   });
-  const [progressView, setProgressView] = useState('menu'); // menu, history, pastures, crafting
+  const [progressView, setProgressView] = useState('menu'); // menu, pokedex, history, crafting
   const [mobileTab, setMobileTab] = useState('quests'); // hq, quests, management
+  const [inspectPokemonId, setInspectPokemonId] = useState(null);
   const prevBossRef = React.useRef(null);
 
   const [hasOnboarded, setHasOnboarded] = useState(() => {
@@ -104,9 +105,10 @@ function App() {
     prevBossRef.current = activeBoss;
   }, [activeBoss]);
 
+  const todayStr = new Date().toISOString().split('T')[0];
+  
   // Check-in and Recurrence Logic on app load
   useEffect(() => {
-    const todayStr = new Date().toISOString().split('T')[0];
     const savedCheckins = JSON.parse(localStorage.getItem('poke_checkins') || '[]');
 
     if (!savedCheckins.includes(todayStr)) {
@@ -321,7 +323,6 @@ function App() {
   }, []);
 
   const userRank = Math.min(10, Math.floor(trainerXp / 500) + 1);
-  const todayStr = new Date().toISOString().split('T')[0];
 
   const handleOnboardingComplete = (answers) => {
     setHasOnboarded(true);
@@ -474,12 +475,26 @@ function App() {
           <ActivePokemon
             pokemonData={pokemonData}
             level={level}
-            xpPercent={xpPercent}
-            loading={loading}
-            evolving={evolving}
+            xp={currentXp}
+            nextLevelXp={100}
+            activeQuestsCount={Object.values(chores).flat().filter(c => !c.completed).length}
+            onClick={() => {
+              setMobileTab('management');
+              setProgressView('pokedex');
+              setInspectPokemonId(pokemonId);
+            }}
           />
 
-          <CheckInCalendar checkIns={checkIns} />
+          <CheckInCalendar 
+            checkIns={checkIns}
+            onCheckIn={(date) => {
+              const newCheckIns = [...checkIns, date];
+              setCheckIns(newCheckIns);
+              localStorage.setItem('poke_checkins', JSON.stringify(newCheckIns));
+              setXp(prev => prev + 50);
+              setSnackbarMsg("Check-in complete! +50 XP");
+            }}
+          />
         </div>
 
         {/* Column 2: Active Quests */}
@@ -573,6 +588,8 @@ function App() {
                     currentBuddyId={pokemonId}
                     onChangeBuddy={changeBuddy}
                     researchProgress={researchProgress}
+                    inspectPokemonId={inspectPokemonId}
+                    setInspectPokemonId={setInspectPokemonId}
                   />
                 </div>
               )}

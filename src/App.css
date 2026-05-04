@@ -254,7 +254,7 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 0.75rem;
   }
-  
+
   .badge-icon-wrapper {
     padding: 0.5rem;
     border-radius: 12px;

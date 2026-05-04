@@ -1,7 +1,8 @@
 import React from 'react';
 import './ActivePokemon.css';
 
-export default function ActivePokemon({ pokemonData, level, xpPercent, loading, evolving }) {
+export default function ActivePokemon({ pokemonData, level, xp, nextLevelXp, activeQuestsCount, loading, evolving, onClick }) {
+  const xpPercent = (xp / nextLevelXp) * 100;
   if (loading || !pokemonData) {
     return (
       <div className="glass-panel active-pokemon-container loading-state">
@@ -23,10 +24,12 @@ export default function ActivePokemon({ pokemonData, level, xpPercent, loading, 
 
   return (
     <div 
-      className="glass-panel active-pokemon-container"
+      className="glass-panel active-pokemon-container pointer"
+      onClick={onClick}
       style={{
         boxShadow: `0 8px 32px 0 ${typeColorVar}33`,
-        borderColor: `${typeColorVar}66`
+        borderColor: `${typeColorVar}66`,
+        cursor: 'pointer'
       }}
     >
       {/* Background glow based on type */}
@@ -40,7 +43,10 @@ export default function ActivePokemon({ pokemonData, level, xpPercent, loading, 
           <h2 className="retro-text pokemon-name" style={{ color: typeColorVar }}>
             {pokemonData.name}
           </h2>
-          <span className="pokemon-level">Lv. {level}</span>
+          <div className="pokemon-meta-row">
+            <span className="pokemon-level">Lv. {level}</span>
+            <span className="active-tasks-badge">{activeQuestsCount} Quests</span>
+          </div>
         </div>
         <div className="pokemon-types">
           {pokemonData.types.map((t) => (

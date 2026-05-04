@@ -16,12 +16,19 @@
 .research-modal {
   width: 100%;
   max-width: 500px;
+  max-height: 85vh;
   background: #1a1a1a;
   border: 2px solid #333;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.research-modal::-webkit-scrollbar {
+  display: none;
 }
 
 .research-header {

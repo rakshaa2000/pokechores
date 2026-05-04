@@ -2,7 +2,14 @@ import React, { useEffect, useState } from 'react';
 import ResearchModal from './ResearchModal';
 import './PokemonCollection.css';
 
-export default function PokemonCollection({ collection, currentBuddyId, onChangeBuddy, researchProgress }) {
+export default function PokemonCollection({ 
+  collection, 
+  currentBuddyId, 
+  onChangeBuddy, 
+  researchProgress,
+  inspectPokemonId,
+  setInspectPokemonId
+}) {
   const [pokemonDetails, setPokemonDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPokemon, setSelectedPokemon] = useState(null);
@@ -37,6 +44,15 @@ export default function PokemonCollection({ collection, currentBuddyId, onChange
       fetchCollection();
     }
   }, [collection]);
+
+  useEffect(() => {
+    if (inspectPokemonId) {
+      const pokemon = pokemonDetails.find(p => p.id === inspectPokemonId);
+      if (pokemon) {
+        setSelectedPokemon(pokemon);
+      }
+    }
+  }, [inspectPokemonId, pokemonDetails]);
 
   if (loading) {
     return (
@@ -84,7 +100,10 @@ export default function PokemonCollection({ collection, currentBuddyId, onChange
           researchProgress={researchProgress}
           isBuddy={selectedPokemon.id === currentBuddyId}
           onSetBuddy={onChangeBuddy}
-          onClose={() => setSelectedPokemon(null)}
+          onClose={() => {
+            setSelectedPokemon(null);
+            setInspectPokemonId(null);
+          }}
         />
       )}
     </div>
