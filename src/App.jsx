@@ -18,22 +18,22 @@ import { Sparkles, Trophy, Brush, X, Hammer, LayoutGrid } from 'lucide-react';
 import './App.css';
 
 function App() {
-  const { 
-    pokemonId, 
-    pokemonData, 
-    level, 
-    xp, 
+  const {
+    pokemonId,
+    pokemonData,
+    level,
+    xp,
     trainerXp,
-    loading, 
-    evolving, 
-    completeTask, 
+    loading,
+    evolving,
+    completeTask,
     xpPercent,
     collection,
     changeBuddy,
     activeBoss,
     tasksUntilBoss
-  } = usePokemon(); 
-  
+  } = usePokemon();
+
   const [chores, setChores] = useState(() => {
     const saved = localStorage.getItem('poke_chores');
     const base = { daily: [], weekly: [], monthly: [], 'one-time': [] };
@@ -76,7 +76,7 @@ function App() {
   const [hasOnboarded, setHasOnboarded] = useState(() => {
     return localStorage.getItem('poke_onboarded') === 'true';
   });
-  
+
   const [wispsCompleted, setWispsCompleted] = useState(() => {
     const saved = localStorage.getItem('poke_wisps_date');
     const today = new Date().toISOString().split('T')[0];
@@ -94,11 +94,11 @@ function App() {
       setShowEncounterSplash(true);
       setTimeout(() => setShowEncounterSplash(false), 3500);
     }
-    
+
     if (!activeBoss && prevBossRef.current && prevBossRef.current.currentHp <= 0) {
       setSnackbarMsg(`Gotcha! ${prevBossRef.current.data.name} was caught!`);
     }
-    
+
     prevBossRef.current = activeBoss;
   }, [activeBoss]);
 
@@ -163,16 +163,16 @@ function App() {
           monthly: addUnique(prev.monthly, respawnedTasks.monthly),
           'one-time': prev['one-time'] || []
         };
-        
+
         // Alpha Chore Logic
         const savedAlpha = JSON.parse(localStorage.getItem('poke_alpha') || '{"date":null,"choreId":null}');
         if (savedAlpha.date !== todayStr) {
           const pendingDaily = newChores.daily.filter(c => !c.completed);
           if (pendingDaily.length > 0) {
-             const randomChore = pendingDaily[Math.floor(Math.random() * pendingDaily.length)];
-             const newAlphaInfo = { date: todayStr, choreId: randomChore.id };
-             setAlphaInfo(newAlphaInfo);
-             localStorage.setItem('poke_alpha', JSON.stringify(newAlphaInfo));
+            const randomChore = pendingDaily[Math.floor(Math.random() * pendingDaily.length)];
+            const newAlphaInfo = { date: todayStr, choreId: randomChore.id };
+            setAlphaInfo(newAlphaInfo);
+            localStorage.setItem('poke_alpha', JSON.stringify(newAlphaInfo));
           }
         }
 
@@ -186,10 +186,10 @@ function App() {
         if (savedAlpha.date !== todayStr) {
           const pendingDaily = prev.daily.filter(c => !c.completed);
           if (pendingDaily.length > 0) {
-             const randomChore = pendingDaily[Math.floor(Math.random() * pendingDaily.length)];
-             const newAlphaInfo = { date: todayStr, choreId: randomChore.id };
-             setAlphaInfo(newAlphaInfo);
-             localStorage.setItem('poke_alpha', JSON.stringify(newAlphaInfo));
+            const randomChore = pendingDaily[Math.floor(Math.random() * pendingDaily.length)];
+            const newAlphaInfo = { date: todayStr, choreId: randomChore.id };
+            setAlphaInfo(newAlphaInfo);
+            localStorage.setItem('poke_alpha', JSON.stringify(newAlphaInfo));
           }
         }
         return prev;
@@ -204,15 +204,15 @@ function App() {
     localStorage.setItem('poke_archive', JSON.stringify(archive));
     localStorage.setItem('poke_inventory', JSON.stringify(inventory));
     localStorage.setItem('poke_research', JSON.stringify(researchProgress));
-    
+
     const now = new Date();
     let foundReminder = false;
-    
+
     Object.values(chores).flat().forEach(chore => {
       if (chore.deadline && !chore.completed && chore.reminder && !foundReminder) {
         const deadlineDate = new Date(chore.deadline);
         const timeDiff = deadlineDate - now;
-        
+
         if (timeDiff > 0 && timeDiff < 4 * 60 * 60 * 1000) {
           setSnackbarMsg(`Reminder: "${chore.text}" is due soon!`);
           foundReminder = true;
@@ -236,7 +236,7 @@ function App() {
       xp: xpReward,
       type: type
     };
-    
+
     setChores(prev => ({
       ...prev,
       [type]: [...prev[type], newChore]
@@ -250,11 +250,11 @@ function App() {
 
     const xpToAward = dynamicXp || targetChore.xp;
     completeTask(xpToAward);
-    
+
     setChores(prev => {
       const typeChores = prev[type];
       const choreIndex = typeChores.findIndex(c => c.id === id);
-      
+
       if (choreIndex === -1 || typeChores[choreIndex].completed) return prev;
 
       const newChores = [...typeChores];
@@ -265,7 +265,7 @@ function App() {
     setTimeout(() => {
       const isAlpha = id === alphaInfo.choreId && new Date().getHours() < 12;
       setArchive(prev => [{ ...targetChore, completedAt: Date.now(), type, alphaBonus: isAlpha }, ...prev]);
-      
+
       // Increment Research Progress
       setResearchProgress(prev => ({
         ...prev,
@@ -275,7 +275,7 @@ function App() {
       // Drop Mechanics
       const roll = Math.random();
       let drop = null;
-      
+
       if (isAlpha) {
         drop = 'masterball_shard';
         setSnackbarMsg(`EARLY BIRD ALPHA! Found a Master Shard!`);
@@ -285,7 +285,7 @@ function App() {
       } else {
         drop = 'shards';
       }
-      
+
       if (drop) {
         setInventory(prev => ({ ...prev, [drop]: (prev[drop] || 0) + 1 }));
         if (!isAlpha) setSnackbarMsg(`Found 1x ${drop}!`);
@@ -324,23 +324,23 @@ function App() {
   const handleOnboardingComplete = (answers) => {
     setHasOnboarded(true);
     localStorage.setItem('poke_onboarded', 'true');
-    
+
     changeBuddy(answers.starterId);
 
     const newChores = { daily: [], weekly: [], monthly: [] };
-    
+
     if (answers.struggle === 'Procrastination') {
-      newChores.daily.push({ id: Date.now()+1, text: 'Do 1 small task for 5 mins', completed: false, xp: 20, type: 'daily' });
+      newChores.daily.push({ id: Date.now() + 1, text: 'Do 1 small task for 5 mins', completed: false, xp: 20, type: 'daily' });
     } else if (answers.struggle === 'Forgetting') {
-      newChores.daily.push({ id: Date.now()+2, text: "Review tomorrow's schedule", completed: false, xp: 20, type: 'daily' });
+      newChores.daily.push({ id: Date.now() + 2, text: "Review tomorrow's schedule", completed: false, xp: 20, type: 'daily' });
     } else if (answers.struggle === 'Overworking') {
-      newChores.daily.push({ id: Date.now()+3, text: 'Take a 15 min mindful break', completed: false, xp: 20, type: 'daily' });
+      newChores.daily.push({ id: Date.now() + 3, text: 'Take a 15 min mindful break', completed: false, xp: 20, type: 'daily' });
     }
 
     if (answers.habit === 'Morning') {
-      newChores.daily.push({ id: Date.now()+4, text: 'Morning stretch', completed: false, xp: 10, type: 'daily' });
+      newChores.daily.push({ id: Date.now() + 4, text: 'Morning stretch', completed: false, xp: 10, type: 'daily' });
     } else if (answers.habit === 'Night') {
-      newChores.daily.push({ id: Date.now()+5, text: 'Prepare for bed', completed: false, xp: 10, type: 'daily' });
+      newChores.daily.push({ id: Date.now() + 5, text: 'Prepare for bed', completed: false, xp: 10, type: 'daily' });
     }
 
     setChores(prev => ({
@@ -361,7 +361,7 @@ function App() {
       {!hasOnboarded && <Onboarding onComplete={handleOnboardingComplete} />}
       {!wispsCompleted && hasOnboarded && <WispsHunt onComplete={handleWispsComplete} />}
       {showQuickAdd && <QuickAdd onAdd={handleAddChore} onClose={() => setShowQuickAdd(false)} />}
-      
+
       {showStats && (
         <div className="quick-add-overlay" onClick={() => setShowStats(false)}>
           <div className="glass-panel stats-modal animate-pop-in" onClick={e => e.stopPropagation()}>
@@ -401,8 +401,8 @@ function App() {
                   { id: 7, name: 'Volcano', xp: 15000, color: '#ef4444' },
                   { id: 8, name: 'Earth', xp: 20000, color: '#16a34a' },
                 ].map(badge => (
-                  <div 
-                    key={badge.id} 
+                  <div
+                    key={badge.id}
                     className={`badge-icon-wrapper ${trainerXp >= badge.xp ? 'earned' : 'locked'}`}
                     style={{ '--badge-color': badge.color }}
                     title={trainerXp >= badge.xp ? `${badge.name} Badge` : `Unlocks at ${badge.xp} XP`}
@@ -420,68 +420,68 @@ function App() {
       {showEncounterSplash && activeBoss && (
         <WildEncounterSplash bossData={activeBoss.data} />
       )}
-      
+
       <header className="app-header">
         <div className="logo-container">
           <span className="app-logo-emoji">🧹</span>
           <h1 className="retro-text title-gradient">PokeChore</h1>
         </div>
-        
+
         <div className="xp-container pointer" onClick={() => setShowStats(true)}>
           <Sparkles className="icon small gold" />
           <span className="xp-text">Total XP: {trainerXp}</span>
         </div>
       </header>
 
-      <ProgressBanner 
-        activeBoss={activeBoss} 
-        tasksUntilBoss={tasksUntilBoss} 
+      <ProgressBanner
+        activeBoss={activeBoss}
+        tasksUntilBoss={tasksUntilBoss}
       />
 
-      <nav className="mobile-nav">
-        <button 
-          className={activeTab === 'buddy' ? 'active' : ''} 
+      <nav className="app-nav">
+        <button
+          className={activeTab === 'buddy' ? 'active' : ''}
           onClick={() => setActiveTab('buddy')}
         >
           <div className="nav-icon-wrapper">
-            <img 
-              src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/25.gif" 
-              alt="Buddy" 
+            <img
+              src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/25.gif"
+              alt="Buddy"
               className="nav-buddy-img"
             />
           </div>
           <span>Buddy</span>
         </button>
-        <button 
-          className={['daily', 'weekly', 'monthly', 'one-time'].includes(activeTab) ? 'active' : ''} 
+        <button
+          className={['daily', 'weekly', 'monthly', 'one-time'].includes(activeTab) ? 'active' : ''}
           onClick={() => setActiveTab('daily')}
         >
           <Sparkles size={20} />
           <span>Quests</span>
         </button>
-        <button 
-          className={activeTab === 'collection' ? 'active' : ''} 
+        <button
+          className={activeTab === 'collection' ? 'active' : ''}
           onClick={() => setActiveTab('collection')}
         >
           <Trophy size={20} />
           <span>Collection</span>
         </button>
-        <button 
-          className={activeTab === 'crafting' ? 'active' : ''} 
+        <button
+          className={activeTab === 'crafting' ? 'active' : ''}
           onClick={() => setActiveTab('crafting')}
         >
           <Hammer size={20} />
           <span>Crafting</span>
         </button>
-        <button 
-          className={activeTab === 'pastures' ? 'active' : ''} 
+        <button
+          className={activeTab === 'pastures' ? 'active' : ''}
           onClick={() => setActiveTab('pastures')}
         >
           <LayoutGrid size={20} />
           <span>Pastures</span>
         </button>
-        <button 
-          className={activeTab === 'archive' ? 'active' : ''} 
+        <button
+          className={activeTab === 'archive' ? 'active' : ''}
           onClick={() => setActiveTab('archive')}
         >
           <Trophy size={20} className="icon-rotate" />
@@ -492,21 +492,21 @@ function App() {
       <main className="main-grid">
         {/* Column 1: HQ (Stats & Buddy) */}
         <div className="column section-hq">
-          <ActivePokemon 
-            pokemonData={pokemonData} 
-            level={level} 
-            xpPercent={xpPercent} 
+          <ActivePokemon
+            pokemonData={pokemonData}
+            level={level}
+            xpPercent={xpPercent}
             loading={loading}
             evolving={evolving}
           />
-          
+
           <CheckInCalendar checkIns={checkIns} />
         </div>
 
         {/* Column 2: Active Quests */}
         <div className="column section-quests">
           <BossBattle activeBoss={activeBoss} />
-          
+
           <div className="tabs-container">
             {['daily', 'weekly', 'monthly', 'one-time'].map(tab => (
               <button
@@ -521,7 +521,7 @@ function App() {
 
           <div className="chore-list-wrapper animate-pop-in">
             {['daily', 'weekly', 'monthly', 'one-time'].includes(activeTab) ? (
-              <ChoreList 
+              <ChoreList
                 type={activeTab}
                 chores={chores[activeTab] || []}
                 onAdd={handleAddChore}
@@ -530,7 +530,7 @@ function App() {
                 alphaChoreId={alphaInfo.date === todayStr ? alphaInfo.choreId : null}
               />
             ) : (
-              <ChoreList 
+              <ChoreList
                 type="daily"
                 chores={chores.daily}
                 onAdd={handleAddChore}
@@ -545,23 +545,23 @@ function App() {
         {/* Column 3: Progress (Collection & History) */}
         <div className="column section-progress">
           {activeTab === 'crafting' ? (
-            <Crafting 
-              inventory={inventory} 
-              setInventory={setInventory} 
-              onCraft={(name) => setSnackbarMsg(`Forged 1x ${name}!`)} 
+            <Crafting
+              inventory={inventory}
+              setInventory={setInventory}
+              onCraft={(name) => setSnackbarMsg(`Forged 1x ${name}!`)}
             />
           ) : activeTab === 'pastures' ? (
-            <Pastures 
-              collection={collection} 
-              onBuddyChange={changeBuddy} 
+            <Pastures
+              collection={collection}
+              onBuddyChange={changeBuddy}
             />
           ) : (
             <>
               <div className="section-collection">
-                <PokemonCollection 
-                  collection={collection} 
-                  currentBuddyId={pokemonId} 
-                  onChangeBuddy={changeBuddy} 
+                <PokemonCollection
+                  collection={collection}
+                  currentBuddyId={pokemonId}
+                  onChangeBuddy={changeBuddy}
                   researchProgress={researchProgress}
                 />
               </div>
@@ -574,9 +574,9 @@ function App() {
         </div>
       </main>
 
-      <Snackbar 
-        message={snackbarMsg} 
-        onClose={() => setSnackbarMsg(null)} 
+      <Snackbar
+        message={snackbarMsg}
+        onClose={() => setSnackbarMsg(null)}
       />
     </div>
   );
