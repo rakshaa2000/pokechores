@@ -9,6 +9,8 @@ import CheckInCalendar from './components/CheckInCalendar';
 import TaskArchive from './components/TaskArchive';
 import WildEncounterSplash from './components/WildEncounterSplash';
 import ProgressBanner from './components/ProgressBanner';
+import Onboarding from './components/Onboarding';
+import WispsHunt from './components/WispsHunt';
 import { Sparkles, Trophy } from 'lucide-react';
 import './App.css';
 
@@ -54,6 +56,21 @@ function App() {
   const [snackbarMsg, setSnackbarMsg] = useState(null);
   const [showEncounterSplash, setShowEncounterSplash] = useState(false);
   const prevBossRef = React.useRef(null);
+
+  const [hasOnboarded, setHasOnboarded] = useState(() => {
+    return localStorage.getItem('poke_onboarded') === 'true';
+  });
+  
+  const [wispsCompleted, setWispsCompleted] = useState(() => {
+    const saved = localStorage.getItem('poke_wisps_date');
+    const today = new Date().toISOString().split('T')[0];
+    return saved === today;
+  });
+
+  const [alphaInfo, setAlphaInfo] = useState(() => {
+    const saved = localStorage.getItem('poke_alpha');
+    return saved ? JSON.parse(saved) : { date: null, choreId: null };
+  });
 
   // Encounter & Catch Logic
   useEffect(() => {
@@ -124,13 +141,42 @@ function App() {
           existing.forEach(e => { if (!res.some(r => r.text === e.text)) res.push(e); });
           return res;
         };
-        return {
+        const newChores = {
           daily: addUnique(prev.daily, respawnedTasks.daily),
           weekly: addUnique(prev.weekly, respawnedTasks.weekly),
           monthly: addUnique(prev.monthly, respawnedTasks.monthly)
         };
+        
+        // Alpha Chore Logic
+        const savedAlpha = JSON.parse(localStorage.getItem('poke_alpha') || '{"date":null,"choreId":null}');
+        if (savedAlpha.date !== todayStr) {
+          const pendingDaily = newChores.daily.filter(c => !c.completed);
+          if (pendingDaily.length > 0) {
+             const randomChore = pendingDaily[Math.floor(Math.random() * pendingDaily.length)];
+             const newAlphaInfo = { date: todayStr, choreId: randomChore.id };
+             setAlphaInfo(newAlphaInfo);
+             localStorage.setItem('poke_alpha', JSON.stringify(newAlphaInfo));
+          }
+        }
+
+        return newChores;
       });
       setArchive(tasksToKeepInArchive);
+    } else {
+      // Alpha Chore Logic (when no respawns)
+      setChores(prev => {
+        const savedAlpha = JSON.parse(localStorage.getItem('poke_alpha') || '{"date":null,"choreId":null}');
+        if (savedAlpha.date !== todayStr) {
+          const pendingDaily = prev.daily.filter(c => !c.completed);
+          if (pendingDaily.length > 0) {
+             const randomChore = pendingDaily[Math.floor(Math.random() * pendingDaily.length)];
+             const newAlphaInfo = { date: todayStr, choreId: randomChore.id };
+             setAlphaInfo(newAlphaInfo);
+             localStorage.setItem('poke_alpha', JSON.stringify(newAlphaInfo));
+          }
+        }
+        return prev;
+      });
     }
 
   }, []);
@@ -178,11 +224,12 @@ function App() {
     }));
   };
 
-  const handleToggleChore = (type, id) => {
+  const handleToggleChore = (type, id, dynamicXp) => {
     const targetChore = chores[type].find(c => c.id === id);
     if (!targetChore || targetChore.completed) return;
 
-    completeTask(targetChore.xp);
+    const xpToAward = dynamicXp || targetChore.xp;
+    completeTask(xpToAward);
     
     setChores(prev => {
       const typeChores = prev[type];
@@ -208,8 +255,55 @@ function App() {
     }));
   };
 
+  const todayStr = new Date().toISOString().split('T')[0];
+  const yesterdayDate = new Date();
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const yesterdayStr = yesterdayDate.toISOString().split('T')[0];
+  const onStreak = checkIns.includes(yesterdayStr) || (checkIns.includes(todayStr) && checkIns.length === 1) || checkIns.length > 1 && checkIns.includes(todayStr) && checkIns.includes(yesterdayStr); 
+  const themeClass = onStreak ? 'theme-sunny' : 'theme-gloomy';
+  
+  const userRank = Math.min(10, Math.floor(trainerXp / 500) + 1);
+
+  const handleOnboardingComplete = (answers) => {
+    setHasOnboarded(true);
+    localStorage.setItem('poke_onboarded', 'true');
+    
+    changeBuddy(answers.starterId);
+
+    const newChores = { daily: [], weekly: [], monthly: [] };
+    
+    if (answers.struggle === 'Procrastination') {
+      newChores.daily.push({ id: Date.now()+1, text: 'Do 1 small task for 5 mins', completed: false, xp: 20, type: 'daily' });
+    } else if (answers.struggle === 'Forgetting') {
+      newChores.daily.push({ id: Date.now()+2, text: "Review tomorrow's schedule", completed: false, xp: 20, type: 'daily' });
+    } else if (answers.struggle === 'Overworking') {
+      newChores.daily.push({ id: Date.now()+3, text: 'Take a 15 min mindful break', completed: false, xp: 20, type: 'daily' });
+    }
+
+    if (answers.habit === 'Morning') {
+      newChores.daily.push({ id: Date.now()+4, text: 'Morning stretch', completed: false, xp: 10, type: 'daily' });
+    } else if (answers.habit === 'Night') {
+      newChores.daily.push({ id: Date.now()+5, text: 'Prepare for bed', completed: false, xp: 10, type: 'daily' });
+    }
+
+    setChores(prev => ({
+      ...prev,
+      daily: [...prev.daily, ...newChores.daily]
+    }));
+  };
+
+  const handleWispsComplete = () => {
+    const today = new Date().toISOString().split('T')[0];
+    localStorage.setItem('poke_wisps_date', today);
+    setWispsCompleted(true);
+    setSnackbarMsg('You collected all the Wisps! A rare ghost approaches...');
+  };
+
   return (
-    <div className={`app-container main-tab-${activeTab === 'daily' || activeTab === 'weekly' || activeTab === 'monthly' ? 'quests' : activeTab}`}>
+    <div className={`app-container ${themeClass} main-tab-${activeTab === 'daily' || activeTab === 'weekly' || activeTab === 'monthly' ? 'quests' : activeTab}`}>
+      {!hasOnboarded && <Onboarding onComplete={handleOnboardingComplete} />}
+      {!wispsCompleted && hasOnboarded && <WispsHunt onComplete={handleWispsComplete} />}
+
       {showEncounterSplash && activeBoss && (
         <WildEncounterSplash bossData={activeBoss.data} />
       )}
@@ -297,6 +391,10 @@ function App() {
                 </span>
               </div>
               <div className="stat-row">
+                <span className="stat-label">Trainer Rank</span>
+                <span className="stat-value">{userRank}-Star</span>
+              </div>
+              <div className="stat-row">
                 <span className="stat-label">Buddy XP</span>
                 <span className="stat-value">{xp}</span>
               </div>
@@ -330,6 +428,7 @@ function App() {
                   onAdd={handleAddChore}
                   onToggle={handleToggleChore}
                   onDelete={handleDeleteChore}
+                  alphaChoreId={alphaInfo.date === todayStr ? alphaInfo.choreId : null}
                 />
               ) : (
                 <ChoreList 
@@ -338,6 +437,7 @@ function App() {
                   onAdd={handleAddChore}
                   onToggle={handleToggleChore}
                   onDelete={handleDeleteChore}
+                  alphaChoreId={alphaInfo.date === todayStr ? alphaInfo.choreId : null}
                 />
               )}
             </div>

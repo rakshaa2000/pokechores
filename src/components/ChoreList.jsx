@@ -6,12 +6,26 @@ const PRESET_LABELS = [
   "Brain Fuel", "Zen Mode", "Adulting", "Self Care", "Hustle", "Side Quest"
 ];
 
-export default function ChoreList({ type, chores, onAdd, onToggle, onDelete }) {
+export default function ChoreList({ type, chores, onAdd, onToggle, onDelete, alphaChoreId }) {
   const [text, setText] = useState('');
   const [label, setLabel] = useState('');
   const [deadline, setDeadline] = useState('');
   const [reminder, setReminder] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+
+  const getDynamicXp = (chore) => {
+    const isAlpha = chore.id === alphaChoreId;
+    // chore.id is Date.now() when created.
+    const daysOld = Math.floor((Date.now() - chore.id) / (1000 * 60 * 60 * 24));
+    let xp = chore.xp;
+    if (daysOld > 0 && !chore.completed) {
+      xp += (daysOld * 10);
+    }
+    if (isAlpha && !chore.completed) {
+      xp *= 5; // Alpha chore bounty
+    }
+    return xp;
+  };
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -45,14 +59,18 @@ export default function ChoreList({ type, chores, onAdd, onToggle, onDelete }) {
             No {type} quests yet. A wild task appeared!
           </div>
         ) : (
-          chores.map(chore => (
+          chores.map(chore => {
+            const dynamicXp = getDynamicXp(chore);
+            const isAlpha = chore.id === alphaChoreId && !chore.completed;
+            
+            return (
             <div 
               key={chore.id} 
-              className={`chore-item ${chore.completed ? 'completed' : 'pending'}`}
+              className={`chore-item ${chore.completed ? 'completed' : 'pending'} ${isAlpha ? 'alpha-chore' : ''}`}
             >
               <div className="chore-content-wrapper">
                 <button 
-                  onClick={() => onToggle(type, chore.id)}
+                  onClick={() => onToggle(type, chore.id, dynamicXp)}
                   className="chore-toggle-btn"
                 >
                   {chore.completed ? (
@@ -87,8 +105,13 @@ export default function ChoreList({ type, chores, onAdd, onToggle, onDelete }) {
               </div>
               
               <div className="chore-actions">
-                <span className="xp-badge">
-                  +{chore.xp} XP
+                {isAlpha && (
+                  <span className="alpha-badge">
+                    ALPHA
+                  </span>
+                )}
+                <span className={`xp-badge ${chore.id !== alphaChoreId && dynamicXp > chore.xp ? 'bounty' : ''}`}>
+                  +{dynamicXp} XP
                 </span>
                 <button 
                   onClick={() => onDelete(type, chore.id)}
@@ -98,7 +121,8 @@ export default function ChoreList({ type, chores, onAdd, onToggle, onDelete }) {
                 </button>
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </div>
 

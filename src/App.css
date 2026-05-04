@@ -5,6 +5,15 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  transition: background 0.5s ease;
+}
+
+.app-container.theme-sunny {
+  background: linear-gradient(135deg, #1e40af 0%, #065f46 100%);
+}
+
+.app-container.theme-gloomy {
+  background: linear-gradient(135deg, #374151 0%, #111827 100%);
 }
 
 @media (min-width: 768px) {
