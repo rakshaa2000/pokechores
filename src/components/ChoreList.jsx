@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Circle, Plus, Trash2, Calendar as CalendarIcon, Bell, Tag, Settings } from 'lucide-react';
+import { CheckCircle2, Circle, Plus, Trash2, Calendar as CalendarIcon, Bell, Tag, Settings, Sparkles } from 'lucide-react';
 import './ChoreList.css';
 
 const PRESET_LABELS = [
@@ -47,7 +47,10 @@ export default function ChoreList({ type, chores, onAdd, onToggle, onDelete, alp
   return (
     <div className="glass-panel chore-list-container">
       <div className="chore-list-header">
-        <h3 className="retro-text chore-list-title">{type} Quests</h3>
+        <div className="flex items-center gap-2">
+          <Sparkles size={16} className="text-yellow-400" />
+          <h3 className="retro-text chore-list-title">{type} Quests</h3>
+        </div>
         <span className="chore-counter">
           {chores.filter(c => c.completed).length} / {chores.length}
         </span>

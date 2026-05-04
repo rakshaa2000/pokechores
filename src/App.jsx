@@ -11,7 +11,8 @@ import WildEncounterSplash from './components/WildEncounterSplash';
 import ProgressBanner from './components/ProgressBanner';
 import Onboarding from './components/Onboarding';
 import WispsHunt from './components/WispsHunt';
-import { Sparkles, Trophy } from 'lucide-react';
+import QuickAdd from './components/QuickAdd';
+import { Sparkles, Trophy, Brush } from 'lucide-react';
 import './App.css';
 
 function App() {
@@ -33,13 +34,16 @@ function App() {
   
   const [chores, setChores] = useState(() => {
     const saved = localStorage.getItem('poke_chores');
-    if (saved) return JSON.parse(saved);
-    
-    return {
-      daily: [],
-      weekly: [],
-      monthly: []
-    };
+    const base = { daily: [], weekly: [], monthly: [], 'one-time': [] };
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return { ...base, ...parsed };
+      } catch (e) {
+        return base;
+      }
+    }
+    return base;
   });
 
   const [archive, setArchive] = useState(() => {
@@ -55,6 +59,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('daily');
   const [snackbarMsg, setSnackbarMsg] = useState(null);
   const [showEncounterSplash, setShowEncounterSplash] = useState(false);
+  const [showQuickAdd, setShowQuickAdd] = useState(false);
   const prevBossRef = React.useRef(null);
 
   const [hasOnboarded, setHasOnboarded] = useState(() => {
@@ -101,7 +106,7 @@ function App() {
     // Handle Recurrence from Archive
     const now = Date.now();
     const msPerDay = 24 * 60 * 60 * 1000;
-    let respawnedTasks = { daily: [], weekly: [], monthly: [] };
+    let respawnedTasks = { daily: [], weekly: [], monthly: [], 'one-time': [] };
     let tasksToKeepInArchive = [];
 
     archive.forEach(task => {
@@ -144,7 +149,8 @@ function App() {
         const newChores = {
           daily: addUnique(prev.daily, respawnedTasks.daily),
           weekly: addUnique(prev.weekly, respawnedTasks.weekly),
-          monthly: addUnique(prev.monthly, respawnedTasks.monthly)
+          monthly: addUnique(prev.monthly, respawnedTasks.monthly),
+          'one-time': prev['one-time'] || []
         };
         
         // Alpha Chore Logic
@@ -222,6 +228,7 @@ function App() {
       ...prev,
       [type]: [...prev[type], newChore]
     }));
+    setActiveTab(type);
   };
 
   const handleToggleChore = (type, id, dynamicXp) => {
@@ -255,14 +262,23 @@ function App() {
     }));
   };
 
-  const todayStr = new Date().toISOString().split('T')[0];
-  const yesterdayDate = new Date();
-  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-  const yesterdayStr = yesterdayDate.toISOString().split('T')[0];
-  const onStreak = checkIns.includes(yesterdayStr) || (checkIns.includes(todayStr) && checkIns.length === 1) || checkIns.length > 1 && checkIns.includes(todayStr) && checkIns.includes(yesterdayStr); 
-  const themeClass = onStreak ? 'theme-sunny' : 'theme-gloomy';
-  
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.code === 'Space') {
+        e.preventDefault();
+        setShowQuickAdd(true);
+      }
+      if (e.key === 'Escape') {
+        setShowQuickAdd(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const userRank = Math.min(10, Math.floor(trainerXp / 500) + 1);
+  const todayStr = new Date().toISOString().split('T')[0];
 
   const handleOnboardingComplete = (answers) => {
     setHasOnboarded(true);
@@ -300,9 +316,10 @@ function App() {
   };
 
   return (
-    <div className={`app-container ${themeClass} main-tab-${activeTab === 'daily' || activeTab === 'weekly' || activeTab === 'monthly' ? 'quests' : activeTab}`}>
+    <div className={`app-container main-tab-${activeTab === 'daily' || activeTab === 'weekly' || activeTab === 'monthly' || activeTab === 'one-time' ? 'quests' : activeTab}`}>
       {!hasOnboarded && <Onboarding onComplete={handleOnboardingComplete} />}
       {!wispsCompleted && hasOnboarded && <WispsHunt onComplete={handleWispsComplete} />}
+      {showQuickAdd && <QuickAdd onAdd={handleAddChore} onClose={() => setShowQuickAdd(false)} />}
 
       {showEncounterSplash && activeBoss && (
         <WildEncounterSplash bossData={activeBoss.data} />
@@ -310,7 +327,7 @@ function App() {
       
       <header className="app-header">
         <div className="logo-container">
-          <img src="/logo.png" alt="PokeChore Logo" className="app-logo" />
+          <span className="app-logo-emoji">🧹</span>
           <h1 className="retro-text title-gradient">PokeChore</h1>
         </div>
         
@@ -340,7 +357,7 @@ function App() {
           <span>Buddy</span>
         </button>
         <button 
-          className={['daily', 'weekly', 'monthly'].includes(activeTab) ? 'active' : ''} 
+          className={['daily', 'weekly', 'monthly', 'one-time'].includes(activeTab) ? 'active' : ''} 
           onClick={() => setActiveTab('daily')}
         >
           <Sparkles size={20} />
@@ -363,7 +380,8 @@ function App() {
       </nav>
 
       <main className="main-grid">
-        <div className="left-column section-buddy">
+        {/* Column 1: HQ (Stats & Buddy) */}
+        <div className="column section-hq">
           <ActivePokemon 
             pokemonData={pokemonData} 
             level={level} 
@@ -404,46 +422,47 @@ function App() {
           <CheckInCalendar checkIns={checkIns} />
         </div>
 
-        <div className="right-column">
-          <div className="section-quests">
-            <BossBattle activeBoss={activeBoss} />
-            
-            <div className="tabs-container">
-              {['daily', 'weekly', 'monthly'].map(tab => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`tab-button ${activeTab === tab ? 'active' : ''}`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-            <div className="chore-list-wrapper animate-pop-in">
-              {['daily', 'weekly', 'monthly'].includes(activeTab) ? (
-                <ChoreList 
-                  type={activeTab}
-                  chores={chores[activeTab]}
-                  onAdd={handleAddChore}
-                  onToggle={handleToggleChore}
-                  onDelete={handleDeleteChore}
-                  alphaChoreId={alphaInfo.date === todayStr ? alphaInfo.choreId : null}
-                />
-              ) : (
-                <ChoreList 
-                  type="daily"
-                  chores={chores.daily}
-                  onAdd={handleAddChore}
-                  onToggle={handleToggleChore}
-                  onDelete={handleDeleteChore}
-                  alphaChoreId={alphaInfo.date === todayStr ? alphaInfo.choreId : null}
-                />
-              )}
-            </div>
+        {/* Column 2: Active Quests */}
+        <div className="column section-quests">
+          <BossBattle activeBoss={activeBoss} />
+          
+          <div className="tabs-container">
+            {['daily', 'weekly', 'monthly', 'one-time'].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`tab-button ${activeTab === tab ? 'active' : ''}`}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
 
+          <div className="chore-list-wrapper animate-pop-in">
+            {['daily', 'weekly', 'monthly', 'one-time'].includes(activeTab) ? (
+              <ChoreList 
+                type={activeTab}
+                chores={chores[activeTab] || []}
+                onAdd={handleAddChore}
+                onToggle={handleToggleChore}
+                onDelete={handleDeleteChore}
+                alphaChoreId={alphaInfo.date === todayStr ? alphaInfo.choreId : null}
+              />
+            ) : (
+              <ChoreList 
+                type="daily"
+                chores={chores.daily}
+                onAdd={handleAddChore}
+                onToggle={handleToggleChore}
+                onDelete={handleDeleteChore}
+                alphaChoreId={alphaInfo.date === todayStr ? alphaInfo.choreId : null}
+              />
+            )}
+          </div>
+        </div>
 
+        {/* Column 3: Progress (Collection & History) */}
+        <div className="column section-progress">
           <div className="section-collection">
             <PokemonCollection 
               collection={collection} 

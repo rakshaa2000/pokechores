@@ -52,6 +52,7 @@ export default function TaskArchive({ archive }) {
       case 'daily': return <Star size={14} className="text-blue-400" />;
       case 'weekly': return <ShieldCheck size={14} className="text-purple-400" />;
       case 'monthly': return <Trophy size={14} className="text-yellow-400" />;
+      case 'one-time': return <Zap size={14} className="text-orange-400" />;
       default: return <Layout size={14} />;
     }
   };
@@ -60,68 +61,49 @@ export default function TaskArchive({ archive }) {
     <div className="archive-wrapper animate-fade-in">
       <div className="archive-stats-header glass-panel">
         <div className="stat-card">
-          <div className="stat-icon-bg bg-blue-500/20">
-            <CheckCircle2 size={18} className="text-blue-400" />
-          </div>
+          <CheckCircle2 size={20} className="stat-icon text-blue-400" />
           <div className="stat-info">
-            <span className="stat-val">{totalTasks}</span>
             <span className="stat-lab">Completed</span>
+            <span className="stat-val">{totalTasks}</span>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon-bg bg-yellow-500/20">
-            <Zap size={18} className="text-yellow-400" />
-          </div>
+          <Zap size={20} className="stat-icon text-yellow-400" />
           <div className="stat-info">
-            <span className="stat-val">{totalXP}</span>
             <span className="stat-lab">Total XP</span>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-icon-bg bg-purple-500/20">
-            <Tag size={18} className="text-purple-400" />
-          </div>
-          <div className="stat-info">
-            <span className="stat-val">{uniqueLabels}</span>
-            <span className="stat-lab">Tags Used</span>
+            <span className="stat-val">{totalXP}</span>
           </div>
         </div>
       </div>
 
       <div className="glass-panel archive-container">
+        <div className="archive-header-simple">
+        <History size={16} />
+        <h3 className="retro-text">Activity Log</h3>
+      </div>
         <div className="archive-scroll-area">
           {Object.entries(grouped).map(([date, tasks]) => (
             <div key={date} className="archive-date-group">
-              <div className="archive-date-sticky">
-                <Calendar size={12} />
-                <h4 className="archive-date-header">{date}</h4>
-              </div>
+              <div className="archive-date-label">{date}</div>
               
               <div className="archive-tasks">
                 {tasks.map(task => (
-                  <div key={task.id + task.completedAt} className="archive-task-item group">
+                  <div key={task.id + task.completedAt} className="archive-task-item">
                     <div className="archive-task-main">
-                      <div className="archive-task-indicator">
-                        {getTypeIcon(task.type)}
-                      </div>
+                      <div className="task-type-dot" data-type={task.type} />
                       <div className="archive-task-content">
-                        <div className="archive-task-text">{task.text}</div>
-                        <div className="archive-task-time">
-                          <Clock size={10} />
-                          {new Date(task.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        <span className="archive-task-text">{task.text}</span>
+                        <div className="archive-task-footer">
+                          {getTypeIcon(task.type)}
+                          <span className="footer-time">
+                            {new Date(task.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
                         </div>
                       </div>
                     </div>
                     
                     <div className="archive-task-meta">
-                      {task.label && (
-                        <span className="metadata-badge label-badge">
-                          {task.label}
-                        </span>
-                      )}
-                      <span className="xp-badge-small">
-                        +{task.xp} XP
-                      </span>
+                      <span className="xp-reward-mini">+{task.xp}</span>
                     </div>
                   </div>
                 ))}

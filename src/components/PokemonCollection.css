@@ -10,10 +10,21 @@
 
 @media (min-width: 640px) {
   .pokemon-collection-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     gap: 1rem;
     padding: 1rem;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .pokemon-collection-grid::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .pokemon-collection-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
   }
 }
 
@@ -37,12 +48,13 @@
 
 @media (min-width: 640px) {
   .collection-card {
-    width: auto;
+    flex: 0 0 160px; /* Fixed width for carousel */
     height: auto;
     padding: 1rem;
     border-width: 2px;
     border-radius: 12px;
-    gap: 0;
+    gap: 0.5rem;
+    scroll-snap-align: start;
   }
 }
 
