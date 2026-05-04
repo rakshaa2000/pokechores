@@ -1,10 +1,10 @@
 {
-  "short_name": "PokeCare",
-  "name": "PokeCare",
+  "short_name": "PokeChore",
+  "name": "PokeChore: A Self-Care Adventure",
   "icons": [
     {
-      "src": "favicon.png",
-      "sizes": "512x512",
+      "src": "logo.png",
+      "sizes": "1024x1024",
       "type": "image/png"
     }
   ],

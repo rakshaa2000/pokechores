@@ -216,10 +216,8 @@ function App() {
       
       <header className="app-header">
         <div className="logo-container">
-          <div className="icon-wrapper">
-            <Trophy className="icon gold" />
-          </div>
-          <h1 className="retro-text title-gradient">PokeCare</h1>
+          <img src="/logo.png" alt="PokeChore Logo" className="app-logo" />
+          <h1 className="retro-text title-gradient">PokeChore</h1>
         </div>
         
         <div className="xp-container">
@@ -344,6 +342,7 @@ function App() {
               )}
             </div>
           </div>
+
 
           <div className="section-collection">
             <PokemonCollection 
