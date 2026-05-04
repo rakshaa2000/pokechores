@@ -123,7 +123,11 @@ export function usePokemon() {
 
       setCollection(curr => {
         if (!curr.some(p => p.id === activeBoss.data.id)) {
-          return [...curr, { id: activeBoss.data.id, xp: bossInitialXp }];
+          return [...curr, { 
+            id: activeBoss.data.id, 
+            xp: bossInitialXp,
+            types: activeBoss.data.types.map(t => t.type.name)
+          }];
         }
         return curr;
       });
@@ -131,6 +135,17 @@ export function usePokemon() {
       setActiveBoss(null);
     }
   }, [activeBoss]);
+
+  useEffect(() => {
+    if (pokemonData && collection.length > 0) {
+      setCollection(curr => curr.map(p => {
+        if (p.id === pokemonId && !p.types) {
+          return { ...p, types: pokemonData.types.map(t => t.type.name) };
+        }
+        return p;
+      }));
+    }
+  }, [pokemonData]);
 
   const completeTask = (amount) => {
     if (activeBoss) {
