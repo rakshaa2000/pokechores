@@ -33,6 +33,8 @@
   font-size: 1.25rem;
   margin: 0;
 }
+
+.close-btn-mini {
   background: transparent;
   border: none;
   color: rgba(255, 255, 255, 0.3);

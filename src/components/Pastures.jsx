@@ -6,24 +6,32 @@ import { CSS } from '@dnd-kit/utilities';
 import { LayoutGrid, Heart } from 'lucide-react';
 import './Pastures.css';
 
-function SortableItem({ id, pokemon, isBuddy }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+function SortableItem({ id, pokemon, isBuddy, onBuddyChange }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
     <div 
       ref={setNodeRef} 
       style={style} 
-      {...attributes} 
-      {...listeners}
       className={`pasture-poke-card ${isBuddy ? 'buddy-highlight' : ''}`}
     >
-      <img src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`} alt={pokemon.name} />
-      <span className="poke-label">{pokemon.name}</span>
+      <div className="drag-handle" {...attributes} {...listeners}>
+        <LayoutGrid size={12} />
+      </div>
+      <div 
+        className="poke-click-area"
+        onClick={() => !isBuddy && onBuddyChange(pokemon.id)}
+      >
+        <img src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`} alt={pokemon.name} />
+        <span className="poke-label">{pokemon.name}</span>
+        {isBuddy && <div className="buddy-status-dot"></div>}
+      </div>
     </div>
   );
 }
@@ -83,6 +91,7 @@ export default function Pastures({ collection, currentBuddyId, onBuddyChange }) 
                   id={id} 
                   pokemon={pokemon} 
                   isBuddy={pokemon.id === currentBuddyId}
+                  onBuddyChange={onBuddyChange}
                 />
               );
             })}

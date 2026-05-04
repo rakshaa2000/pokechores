@@ -67,19 +67,13 @@ export default function PokemonCollection({ collection, currentBuddyId, onChange
             }}
           >
             <div className="card-bg" style={{ backgroundColor: typeColorVar }}></div>
-            {isBuddy && <div className="buddy-badge">Buddy</div>}
+            {isBuddy && <div className="buddy-badge-mini"></div>}
             
             <img 
               src={pokemon.sprites.front_default} 
               alt={pokemon.name} 
               className="collection-sprite"
             />
-            <div className="collection-info">
-              <span className="collection-name retro-text">{pokemon.name}</span>
-              <div className="collection-meta">
-                <span className="collection-level">Lv. {level}</span>
-              </div>
-            </div>
           </div>
         );
       })}

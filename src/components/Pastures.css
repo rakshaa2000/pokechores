@@ -41,19 +41,52 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.2s, border-color 0.2s;
+  overflow: hidden;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  cursor: grab;
+  color: rgba(255, 255, 255, 0.3);
+  z-index: 5;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.poke-click-area {
+  padding: 0.75rem 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
-  cursor: grab;
-  transition: transform 0.2s, border-color 0.2s;
+  cursor: pointer;
+  width: 100%;
 }
 
-.pasture-poke-card:active {
-  cursor: grabbing;
-  transform: scale(1.05);
-  z-index: 100;
+.poke-click-area:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.buddy-status-dot {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  background: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #ef4444;
 }
 
 .pasture-poke-card img {

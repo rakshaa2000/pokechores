@@ -1,33 +1,41 @@
 .snackbar-container {
   position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(30, 41, 59, 0.95);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 12px 20px;
-  border-radius: 8px;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 16px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 15px rgba(56, 189, 248, 0.3);
-  z-index: 1000;
-  width: calc(100% - 32px);
-  max-width: 400px;
+  gap: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  transition: all 0.3s;
+}
+
+@media (min-width: 1024px) {
+  .snackbar-container {
+    left: auto;
+    right: 2rem;
+    width: 380px; /* Matches the third column width roughly */
+    bottom: 2rem;
+  }
 }
 
 .animate-slide-up {
-  animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: snack-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes slide-up {
+@keyframes snack-slide-up {
   from {
-    transform: translate(-50%, 100%);
+    transform: translateY(100%) scale(0.9);
     opacity: 0;
   }
   to {
-    transform: translate(-50%, 0);
+    transform: translateY(0) scale(1);
     opacity: 1;
   }
 }
@@ -35,30 +43,27 @@
 .snackbar-content {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-grow: 1;
+  gap: 0.75rem;
+  flex: 1;
 }
 
 .snackbar-icon {
-  color: #38bdf8;
+  color: #fbbf24;
   flex-shrink: 0;
 }
 
 .snackbar-text {
   color: white;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 500;
 }
 
 .snackbar-close {
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 1.5rem;
-  line-height: 1;
+  color: rgba(255, 255, 255, 0.4);
   cursor: pointer;
-  padding: 0 4px;
-  transition: color 0.2s;
+  padding: 0.25rem;
 }
 
 .snackbar-close:hover {
