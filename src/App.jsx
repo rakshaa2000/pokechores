@@ -527,18 +527,18 @@ function App() {
             <div className="management-menu glass-panel animate-pop-in">
               <h3 className="retro-text menu-title">Adventure Log</h3>
               <div className="menu-grid">
-                <button className="menu-card" onClick={() => setProgressView('history')}>
+                <button className="menu-card" onClick={() => setProgressView('pokedex')}>
                   <Trophy className="text-yellow-400" size={32} />
                   <div className="menu-card-info">
                     <span className="card-label">Pokédex</span>
-                    <span className="card-desc">Research levels & collection</span>
+                    <span className="card-desc">Research & Collection</span>
                   </div>
                 </button>
-                <button className="menu-card" onClick={() => setProgressView('pastures')}>
-                  <LayoutGrid className="text-green-400" size={32} />
+                <button className="menu-card" onClick={() => setProgressView('history')}>
+                  <Sparkles className="text-blue-400" size={32} />
                   <div className="menu-card-info">
-                    <span className="card-label">Pastures</span>
-                    <span className="card-desc">Organize your team</span>
+                    <span className="card-label">History</span>
+                    <span className="card-desc">Completed Chore Log</span>
                   </div>
                 </button>
                 <button className="menu-card" onClick={() => setProgressView('crafting')}>
@@ -562,23 +562,19 @@ function App() {
                   setInventory={setInventory}
                   onCraft={(name) => setSnackbarMsg(`Forged 1x ${name}!`)}
                 />
-              ) : progressView === 'pastures' ? (
-                <Pastures
-                  collection={collection}
-                  currentBuddyId={pokemonId}
-                  onBuddyChange={changeBuddy}
-                />
+              ) : progressView === 'history' ? (
+                <div className="section-archive">
+                  <TaskArchive archive={archive} />
+                </div>
               ) : (
-                <>
-                  <div className="section-collection">
-                    <PokemonCollection
-                      collection={collection}
-                      currentBuddyId={pokemonId}
-                      onChangeBuddy={changeBuddy}
-                      researchProgress={researchProgress}
-                    />
-                  </div>
-                </>
+                <div className="section-collection">
+                  <PokemonCollection
+                    collection={collection}
+                    currentBuddyId={pokemonId}
+                    onChangeBuddy={changeBuddy}
+                    researchProgress={researchProgress}
+                  />
+                </div>
               )}
             </div>
           )}

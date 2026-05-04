@@ -232,20 +232,33 @@
 
 .badges-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.75rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.75rem;
 }
 
 .badge-icon-wrapper {
   aspect-ratio: 1;
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .badges-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .badge-icon-wrapper {
+    padding: 0.5rem;
+    border-radius: 12px;
+  }
 }
 
 .badge-icon-wrapper.earned {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -13,6 +13,7 @@ function SortableItem({ id, pokemon, isBuddy, onBuddyChange }) {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 100 : 1,
   };
 
   return (
@@ -36,27 +37,31 @@ function SortableItem({ id, pokemon, isBuddy, onBuddyChange }) {
   );
 }
 
-export default function Pastures({ collection, currentBuddyId, onBuddyChange }) {
+export default function Pastures({ collection, currentBuddyId, onBuddyChange, onOrderChange }) {
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    // Initialize items with collection IDs
     setItems(collection.map(p => p.id.toString()));
   }, [collection]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.indexOf(active.id);
-        const newIndex = items.indexOf(over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
+    if (over && active.id !== over.id) {
+      const oldIndex = items.indexOf(active.id);
+      const newIndex = items.indexOf(over.id);
+      const newItems = arrayMove(items, oldIndex, newIndex);
+      
+      setItems(newItems);
+      
+      // Map back to full pokemon objects and notify parent
+      const newCollection = newItems.map(id => collection.find(p => p.id.toString() === id));
+      onOrderChange(newCollection);
     }
   };
 

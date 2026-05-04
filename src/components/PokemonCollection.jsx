@@ -82,6 +82,8 @@ export default function PokemonCollection({ collection, currentBuddyId, onChange
         <ResearchModal 
           pokemon={selectedPokemon} 
           researchProgress={researchProgress}
+          isBuddy={selectedPokemon.id === currentBuddyId}
+          onSetBuddy={onChangeBuddy}
           onClose={() => setSelectedPokemon(null)}
         />
       )}

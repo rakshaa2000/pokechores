@@ -1,8 +1,7 @@
-import React from 'react';
-import { X, CheckCircle2, Circle, Star } from 'lucide-react';
+import { X, CheckCircle2, Circle, Star, Heart } from 'lucide-react';
 import './ResearchModal.css';
 
-export default function ResearchModal({ pokemon, researchProgress, onClose }) {
+export default function ResearchModal({ pokemon, researchProgress, isBuddy, onSetBuddy, onClose }) {
   // Mocking some research tasks for the specific pokemon
   // In a real app, these would be mapped to specific chores
   const tasks = [
@@ -51,6 +50,23 @@ export default function ResearchModal({ pokemon, researchProgress, onClose }) {
         </div>
 
         <div className="research-footer">
+          {isBuddy ? (
+            <div className="buddy-indicator-large">
+              <Heart className="text-red-500 fill-red-500" size={16} />
+              <span>Current Buddy</span>
+            </div>
+          ) : (
+            <button 
+              className="set-buddy-btn"
+              onClick={() => {
+                onSetBuddy(pokemon.id);
+                onClose();
+              }}
+            >
+              <Heart size={18} />
+              Set as Buddy
+            </button>
+          )}
           <p className="hint">Complete all tasks to achieve Perfect status!</p>
         </div>
       </div>
