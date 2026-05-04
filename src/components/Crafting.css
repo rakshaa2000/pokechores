@@ -1,0 +1,128 @@
+.crafting-container {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.crafting-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.inventory-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.inv-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.6rem;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #ccc;
+}
+
+.recipes-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.recipe-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.recipe-card.available {
+  border-color: rgba(249, 115, 22, 0.3);
+  background: rgba(249, 115, 22, 0.02);
+}
+
+.recipe-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recipe-name {
+  font-weight: bold;
+  color: white;
+}
+
+.ingredients-list {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.ing-badge {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.ing-badge.met {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.ing-badge.missing {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.craft-btn {
+  background: #f97316;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.craft-btn:disabled {
+  background: #4b5563;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.crafting-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+}
+
+.hammer-anim {
+  font-size: 3rem;
+  animation: hammer 0.5s infinite;
+}
+
+@keyframes hammer {
+  0% { transform: rotate(0); }
+  50% { transform: rotate(-30deg); }
+  100% { transform: rotate(0); }
+}

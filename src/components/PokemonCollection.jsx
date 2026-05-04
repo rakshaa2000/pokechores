@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import ResearchModal from './ResearchModal';
 import './PokemonCollection.css';
 
-export default function PokemonCollection({ collection, currentBuddyId, onChangeBuddy }) {
+export default function PokemonCollection({ collection, currentBuddyId, onChangeBuddy, researchProgress }) {
   const [pokemonDetails, setPokemonDetails] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
 
   useEffect(() => {
     async function fetchCollection() {
@@ -59,7 +61,7 @@ export default function PokemonCollection({ collection, currentBuddyId, onChange
           <div 
             key={pokemon.id} 
             className={`collection-card ${isBuddy ? 'is-buddy' : ''}`}
-            onClick={() => !isBuddy && onChangeBuddy(pokemon.id)}
+            onClick={() => setSelectedPokemon(pokemon)}
             style={{
               '--card-color': typeColorVar
             }}
@@ -76,18 +78,19 @@ export default function PokemonCollection({ collection, currentBuddyId, onChange
               <span className="collection-name retro-text">{pokemon.name}</span>
               <div className="collection-meta">
                 <span className="collection-level">Lv. {level}</span>
-                <div className="collection-types">
-                  {pokemon.types.map(t => (
-                    <span key={t.type.name} className="type-badge small">
-                      {t.type.name}
-                    </span>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
         );
       })}
+
+      {selectedPokemon && (
+        <ResearchModal 
+          pokemon={selectedPokemon} 
+          researchProgress={researchProgress}
+          onClose={() => setSelectedPokemon(null)}
+        />
+      )}
     </div>
   );
 }

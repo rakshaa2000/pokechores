@@ -71,6 +71,8 @@ function App() {
     const saved = localStorage.getItem('poke_research');
     return saved ? JSON.parse(saved) : {}; // { 'Wash Dishes': count }
   });
+  const [progressView, setProgressView] = useState('menu'); // menu, history, pastures, crafting
+  const [mobileTab, setMobileTab] = useState('quests'); // hq, quests, management
   const prevBossRef = React.useRef(null);
 
   const [hasOnboarded, setHasOnboarded] = useState(() => {
@@ -438,60 +440,37 @@ function App() {
         tasksUntilBoss={tasksUntilBoss}
       />
 
-      <nav className="app-nav">
-        <button
-          className={activeTab === 'buddy' ? 'active' : ''}
-          onClick={() => setActiveTab('buddy')}
+      <div className="mobile-column-tabs">
+        <button 
+          className={mobileTab === 'hq' ? 'active' : ''} 
+          onClick={() => setMobileTab('hq')}
         >
-          <div className="nav-icon-wrapper">
-            <img
-              src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/25.gif"
-              alt="Buddy"
-              className="nav-buddy-img"
-            />
-          </div>
-          <span>Buddy</span>
+          <img
+            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/${pokemonId}.gif`}
+            alt="HQ"
+            className="mobile-tab-buddy"
+          />
+          <span>HQ</span>
         </button>
-        <button
-          className={['daily', 'weekly', 'monthly', 'one-time'].includes(activeTab) ? 'active' : ''}
-          onClick={() => setActiveTab('daily')}
+        <button 
+          className={mobileTab === 'quests' ? 'active' : ''} 
+          onClick={() => setMobileTab('quests')}
         >
           <Sparkles size={20} />
           <span>Quests</span>
         </button>
-        <button
-          className={activeTab === 'collection' ? 'active' : ''}
-          onClick={() => setActiveTab('collection')}
-        >
-          <Trophy size={20} />
-          <span>Collection</span>
-        </button>
-        <button
-          className={activeTab === 'crafting' ? 'active' : ''}
-          onClick={() => setActiveTab('crafting')}
-        >
-          <Hammer size={20} />
-          <span>Crafting</span>
-        </button>
-        <button
-          className={activeTab === 'pastures' ? 'active' : ''}
-          onClick={() => setActiveTab('pastures')}
+        <button 
+          className={mobileTab === 'management' ? 'active' : ''} 
+          onClick={() => setMobileTab('management')}
         >
           <LayoutGrid size={20} />
-          <span>Pastures</span>
+          <span>Log</span>
         </button>
-        <button
-          className={activeTab === 'archive' ? 'active' : ''}
-          onClick={() => setActiveTab('archive')}
-        >
-          <Trophy size={20} className="icon-rotate" />
-          <span>Archive</span>
-        </button>
-      </nav>
+      </div>
 
       <main className="main-grid">
         {/* Column 1: HQ (Stats & Buddy) */}
-        <div className="column section-hq">
+        <div className={`column section-hq ${mobileTab === 'hq' ? 'mobile-active' : 'mobile-hidden'}`}>
           <ActivePokemon
             pokemonData={pokemonData}
             level={level}
@@ -504,7 +483,7 @@ function App() {
         </div>
 
         {/* Column 2: Active Quests */}
-        <div className="column section-quests">
+        <div className={`column section-quests ${mobileTab === 'quests' ? 'mobile-active' : 'mobile-hidden'}`}>
           <BossBattle activeBoss={activeBoss} />
 
           <div className="tabs-container">
@@ -542,34 +521,66 @@ function App() {
           </div>
         </div>
 
-        {/* Column 3: Progress (Collection & History) */}
-        <div className="column section-progress">
-          {activeTab === 'crafting' ? (
-            <Crafting
-              inventory={inventory}
-              setInventory={setInventory}
-              onCraft={(name) => setSnackbarMsg(`Forged 1x ${name}!`)}
-            />
-          ) : activeTab === 'pastures' ? (
-            <Pastures
-              collection={collection}
-              onBuddyChange={changeBuddy}
-            />
+        {/* Column 3: Progress (Management & History) */}
+        <div className={`column section-progress ${mobileTab === 'management' ? 'mobile-active' : 'mobile-hidden'}`}>
+          {progressView === 'menu' ? (
+            <div className="management-menu glass-panel animate-pop-in">
+              <h3 className="retro-text menu-title">Adventure Log</h3>
+              <div className="menu-grid">
+                <button className="menu-card" onClick={() => setProgressView('history')}>
+                  <Trophy className="text-yellow-400" size={32} />
+                  <div className="menu-card-info">
+                    <span className="card-label">Pokédex</span>
+                    <span className="card-desc">Research levels & collection</span>
+                  </div>
+                </button>
+                <button className="menu-card" onClick={() => setProgressView('pastures')}>
+                  <LayoutGrid className="text-green-400" size={32} />
+                  <div className="menu-card-info">
+                    <span className="card-label">Pastures</span>
+                    <span className="card-desc">Organize your team</span>
+                  </div>
+                </button>
+                <button className="menu-card" onClick={() => setProgressView('crafting')}>
+                  <Hammer className="text-orange-400" size={32} />
+                  <div className="menu-card-info">
+                    <span className="card-label">Crafting</span>
+                    <span className="card-desc">Forge Pokéballs</span>
+                  </div>
+                </button>
+              </div>
+            </div>
           ) : (
-            <>
-              <div className="section-collection">
-                <PokemonCollection
+            <div className="progress-subview-wrapper">
+              <button className="back-to-menu-btn" onClick={() => setProgressView('menu')}>
+                ← Back to Menu
+              </button>
+              
+              {progressView === 'crafting' ? (
+                <Crafting
+                  inventory={inventory}
+                  setInventory={setInventory}
+                  onCraft={(name) => setSnackbarMsg(`Forged 1x ${name}!`)}
+                />
+              ) : progressView === 'pastures' ? (
+                <Pastures
                   collection={collection}
                   currentBuddyId={pokemonId}
-                  onChangeBuddy={changeBuddy}
-                  researchProgress={researchProgress}
+                  onBuddyChange={changeBuddy}
                 />
-              </div>
-
-              <div className="section-archive">
-                <TaskArchive archive={archive} />
-              </div>
-            </>
+              ) : (
+                <>
+                  <div className="section-collection">
+                    <PokemonCollection
+                      collection={collection}
+                      currentBuddyId={pokemonId}
+                      onChangeBuddy={changeBuddy}
+                      researchProgress={researchProgress}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
           )}
         </div>
       </main>
