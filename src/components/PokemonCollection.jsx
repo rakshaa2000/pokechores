@@ -49,7 +49,7 @@ export default function PokemonCollection({ collection, currentBuddyId, onChange
 
   return (
     <div className="pokemon-collection-grid">
-      {pokemonDetails.map(pokemon => {
+      {[...pokemonDetails].reverse().map(pokemon => {
         const isBuddy = pokemon.id === currentBuddyId;
         const primaryType = pokemon.types[0].type.name;
         const typeColorVar = `var(--type-${primaryType}, var(--type-normal))`;

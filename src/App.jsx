@@ -346,9 +346,31 @@ function App() {
                 <span className="stat-label">Buddy XP</span>
                 <span className="stat-value">{xp}</span>
               </div>
-              <div className="stat-row">
-                <span className="stat-label">Badges Earned</span>
-                <span className="stat-value">{Math.floor(trainerXp / 1000)}</span>
+            </div>
+
+            <div className="badges-section mt-6">
+              <h4 className="retro-text text-[10px] text-gray-500 mb-3">Earned Badges</h4>
+              <div className="badges-grid">
+                {[
+                  { id: 1, name: 'Boulder', xp: 500, color: '#94a3b8' },
+                  { id: 2, name: 'Cascade', xp: 1500, color: '#3b82f6' },
+                  { id: 3, name: 'Thunder', xp: 3000, color: '#eab308' },
+                  { id: 4, name: 'Rainbow', xp: 5000, color: '#ec4899' },
+                  { id: 5, name: 'Soul', xp: 7500, color: '#a855f7' },
+                  { id: 6, name: 'Marsh', xp: 10000, color: '#f97316' },
+                  { id: 7, name: 'Volcano', xp: 15000, color: '#ef4444' },
+                  { id: 8, name: 'Earth', xp: 20000, color: '#16a34a' },
+                ].map(badge => (
+                  <div 
+                    key={badge.id} 
+                    className={`badge-icon-wrapper ${trainerXp >= badge.xp ? 'earned' : 'locked'}`}
+                    style={{ '--badge-color': badge.color }}
+                    title={trainerXp >= badge.xp ? `${badge.name} Badge` : `Unlocks at ${badge.xp} XP`}
+                  >
+                    <Trophy size={16} />
+                    <span className="badge-name-tooltip">{badge.name}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

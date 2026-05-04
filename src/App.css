@@ -146,6 +146,55 @@
   padding-bottom: 1rem;
   margin-bottom: 1rem;
 }
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.badge-icon-wrapper {
+  position: relative;
+  aspect-ratio: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s;
+}
+
+.badge-icon-wrapper.earned {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--badge-color);
+  color: var(--badge-color);
+  filter: drop-shadow(0 0 5px var(--badge-color));
+}
+
+.badge-icon-wrapper.locked {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.badge-name-tooltip {
+  position: absolute;
+  bottom: -20px;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+  display: none;
+}
+
+.badge-icon-wrapper:hover .badge-name-tooltip {
+  display: block;
+}
+
+.badge-icon-wrapper:hover {
+  transform: translateY(-2px);
   padding: 1.5rem;
 }
 
@@ -232,7 +281,8 @@
 
 .chore-list-wrapper {
   flex: 1;
-  min-height: 0; /* Allow it to shrink */
+  min-height: 0;
+  /* Allow it to shrink */
   display: flex;
   flex-direction: column;
 }
@@ -302,6 +352,7 @@
   .mobile-nav {
     display: none;
   }
+
   .app-container {
     padding-bottom: 2rem;
   }
@@ -309,24 +360,32 @@
 
 @media (max-width: 1023px) {
   .app-container {
-    padding-bottom: 5rem; /* Space for mobile nav */
+    padding-bottom: 5rem;
+    /* Space for mobile nav */
   }
-  
-  .section-buddy, .section-quests, .section-collection, .section-archive {
+
+  .section-buddy,
+  .section-quests,
+  .section-collection,
+  .section-archive {
     display: none !important;
   }
-  
-  .main-tab-buddy .section-buddy { display: flex !important; }
+
+  .main-tab-buddy .section-buddy {
+    display: flex !important;
+  }
+
   .main-tab-quests .section-quests,
   .main-tab-collection .section-collection,
-  .main-tab-archive .section-archive { 
-    display: flex !important; 
-    flex-direction: column; 
-    height: calc(100vh - 160px); 
+  .main-tab-archive .section-archive {
+    display: flex !important;
+    flex-direction: column;
+    height: calc(100vh - 160px);
     overflow: hidden;
   }
-  
-  .left-column, .right-column {
+
+  .left-column,
+  .right-column {
     display: contents;
   }
 
@@ -334,4 +393,3 @@
     display: none !important;
   }
 }
-
