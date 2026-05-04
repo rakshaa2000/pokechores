@@ -1,0 +1,68 @@
+.pastures-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pastures-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.pasture-grid-wrapper {
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  min-height: 200px;
+}
+
+.pasture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 1rem;
+}
+
+.pasture-item-card {
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  transition: background 0.2s, transform 0.2s;
+  touch-action: none;
+}
+
+.pasture-item-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.pasture-item-card:active {
+  cursor: grabbing;
+}
+
+.pasture-sprite {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.pasture-id {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.2);
+  font-weight: bold;
+}
+
+.pastures-footer-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  color: #475569;
+  padding: 0.5rem;
+}

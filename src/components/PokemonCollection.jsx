@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import PokedexModal from './PokedexModal';
 import './PokemonCollection.css';
 
-export default function PokemonCollection({ collection, currentBuddyId, onChangeBuddy }) {
+export default function PokemonCollection({ collection, currentBuddyId, onChangeBuddy, researchProgress }) {
   const [pokemonDetails, setPokemonDetails] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPokemon, setSelectedPokemon] = useState(null);
 
   useEffect(() => {
     async function fetchCollection() {
@@ -59,13 +61,20 @@ export default function PokemonCollection({ collection, currentBuddyId, onChange
           <div 
             key={pokemon.id} 
             className={`collection-card ${isBuddy ? 'is-buddy' : ''}`}
-            onClick={() => !isBuddy && onChangeBuddy(pokemon.id)}
+            onClick={() => setSelectedPokemon(pokemon)}
             style={{
               '--card-color': typeColorVar
             }}
           >
             <div className="card-bg" style={{ backgroundColor: typeColorVar }}></div>
-            {isBuddy && <div className="buddy-badge">Buddy</div>}
+            {isBuddy && (
+              <div className="buddy-action-hint" onClick={(e) => {
+                e.stopPropagation();
+                // Hints or info?
+              }}>
+                Buddy
+              </div>
+            )}
             
             <img 
               src={pokemon.sprites.front_default} 
@@ -76,18 +85,28 @@ export default function PokemonCollection({ collection, currentBuddyId, onChange
               <span className="collection-name retro-text">{pokemon.name}</span>
               <div className="collection-meta">
                 <span className="collection-level">Lv. {level}</span>
-                <div className="collection-types">
-                  {pokemon.types.map(t => (
-                    <span key={t.type.name} className="type-badge small">
-                      {t.type.name}
-                    </span>
-                  ))}
-                </div>
+                <button 
+                  className="buddy-btn-mini"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!isBuddy) onChangeBuddy(pokemon.id);
+                  }}
+                >
+                  {isBuddy ? 'Active' : 'Set Buddy'}
+                </button>
               </div>
             </div>
           </div>
         );
       })}
+
+      {selectedPokemon && (
+        <PokedexModal 
+          pokemon={selectedPokemon} 
+          researchProgress={researchProgress} 
+          onClose={() => setSelectedPokemon(null)} 
+        />
+      )}
     </div>
   );
 }

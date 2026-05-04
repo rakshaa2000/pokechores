@@ -12,7 +12,9 @@ import ProgressBanner from './components/ProgressBanner';
 import Onboarding from './components/Onboarding';
 import WispsHunt from './components/WispsHunt';
 import QuickAdd from './components/QuickAdd';
-import { Sparkles, Trophy, Brush, X } from 'lucide-react';
+import Crafting from './components/Crafting';
+import Pastures from './components/Pastures';
+import { Sparkles, Trophy, Brush, X, Hammer, LayoutGrid } from 'lucide-react';
 import './App.css';
 
 function App() {
@@ -61,6 +63,14 @@ function App() {
   const [showEncounterSplash, setShowEncounterSplash] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [inventory, setInventory] = useState(() => {
+    const saved = localStorage.getItem('poke_inventory');
+    return saved ? JSON.parse(saved) : { apricorns: 0, iron: 0, shards: 0, pokeballs: 0, greatballs: 0 };
+  });
+  const [researchProgress, setResearchProgress] = useState(() => {
+    const saved = localStorage.getItem('poke_research');
+    return saved ? JSON.parse(saved) : {}; // { 'Wash Dishes': count }
+  });
   const prevBossRef = React.useRef(null);
 
   const [hasOnboarded, setHasOnboarded] = useState(() => {
@@ -192,6 +202,8 @@ function App() {
     localStorage.setItem('poke_chores', JSON.stringify(chores));
     localStorage.setItem('poke_checkins', JSON.stringify(checkIns));
     localStorage.setItem('poke_archive', JSON.stringify(archive));
+    localStorage.setItem('poke_inventory', JSON.stringify(inventory));
+    localStorage.setItem('poke_research', JSON.stringify(researchProgress));
     
     const now = new Date();
     let foundReminder = false;
@@ -251,8 +263,36 @@ function App() {
     });
 
     setTimeout(() => {
-      setArchive(prev => [{ ...targetChore, completedAt: Date.now(), type }, ...prev]);
+      const isAlpha = id === alphaInfo.choreId && new Date().getHours() < 12;
+      setArchive(prev => [{ ...targetChore, completedAt: Date.now(), type, alphaBonus: isAlpha }, ...prev]);
+      
+      // Increment Research Progress
+      setResearchProgress(prev => ({
+        ...prev,
+        [targetChore.text]: (prev[targetChore.text] || 0) + 1
+      }));
+
+      // Drop Mechanics
+      const roll = Math.random();
+      let drop = null;
+      
+      if (isAlpha) {
+        drop = 'masterball_shard';
+        setSnackbarMsg(`EARLY BIRD ALPHA! Found a Master Shard!`);
+      } else if (type === 'daily' || type === 'one-time') {
+        if (roll > 0.5) drop = 'apricorns';
+        else if (roll > 0.2) drop = 'iron';
+      } else {
+        drop = 'shards';
+      }
+      
+      if (drop) {
+        setInventory(prev => ({ ...prev, [drop]: (prev[drop] || 0) + 1 }));
+        if (!isAlpha) setSnackbarMsg(`Found 1x ${drop}!`);
+      }
+
       handleDeleteChore(type, id);
+      if (isAlpha) completeTask(xpToAward * 2); // Double XP for Alpha completed before noon
     }, 500);
   };
 
@@ -427,6 +467,20 @@ function App() {
           <span>Collection</span>
         </button>
         <button 
+          className={activeTab === 'crafting' ? 'active' : ''} 
+          onClick={() => setActiveTab('crafting')}
+        >
+          <Hammer size={20} />
+          <span>Crafting</span>
+        </button>
+        <button 
+          className={activeTab === 'pastures' ? 'active' : ''} 
+          onClick={() => setActiveTab('pastures')}
+        >
+          <LayoutGrid size={20} />
+          <span>Pastures</span>
+        </button>
+        <button 
           className={activeTab === 'archive' ? 'active' : ''} 
           onClick={() => setActiveTab('archive')}
         >
@@ -490,17 +544,33 @@ function App() {
 
         {/* Column 3: Progress (Collection & History) */}
         <div className="column section-progress">
-          <div className="section-collection">
-            <PokemonCollection 
-              collection={collection} 
-              currentBuddyId={pokemonId} 
-              onChangeBuddy={changeBuddy} 
+          {activeTab === 'crafting' ? (
+            <Crafting 
+              inventory={inventory} 
+              setInventory={setInventory} 
+              onCraft={(name) => setSnackbarMsg(`Forged 1x ${name}!`)} 
             />
-          </div>
+          ) : activeTab === 'pastures' ? (
+            <Pastures 
+              collection={collection} 
+              onBuddyChange={changeBuddy} 
+            />
+          ) : (
+            <>
+              <div className="section-collection">
+                <PokemonCollection 
+                  collection={collection} 
+                  currentBuddyId={pokemonId} 
+                  onChangeBuddy={changeBuddy} 
+                  researchProgress={researchProgress}
+                />
+              </div>
 
-          <div className="section-archive">
-            <TaskArchive archive={archive} />
-          </div>
+              <div className="section-archive">
+                <TaskArchive archive={archive} />
+              </div>
+            </>
+          )}
         </div>
       </main>
 

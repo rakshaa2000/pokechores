@@ -201,6 +201,29 @@
   }
 }
 
+.buddy-btn-mini {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 0.6rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.2s;
+}
+
+.buddy-btn-mini:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.collection-card.is-buddy .buddy-btn-mini {
+  background: rgba(34, 197, 94, 0.2);
+  border-color: #4ade80;
+  color: #4ade80;
+  cursor: default;
+}
+
 .collection-loading {
   display: flex;
   justify-content: center;
