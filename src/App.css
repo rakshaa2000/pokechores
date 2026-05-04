@@ -115,21 +115,37 @@
 }
 
 .section-progress {
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
-  padding-right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.section-progress::-webkit-scrollbar {
-  width: 4px;
+.pointer {
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
-.section-progress::-webkit-scrollbar-thumb {
+.pointer:hover {
+  transform: scale(1.05);
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
 }
 
-.stats-panel {
+.stats-modal {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(15, 23, 42, 0.95);
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
   padding: 1.5rem;
 }
 

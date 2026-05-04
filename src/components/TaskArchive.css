@@ -51,6 +51,7 @@
   flex-direction: column;
   overflow: hidden;
   padding: 0;
+  max-height: 400px;
 }
 
 .archive-scroll-area {

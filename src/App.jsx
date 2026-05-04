@@ -12,7 +12,7 @@ import ProgressBanner from './components/ProgressBanner';
 import Onboarding from './components/Onboarding';
 import WispsHunt from './components/WispsHunt';
 import QuickAdd from './components/QuickAdd';
-import { Sparkles, Trophy, Brush } from 'lucide-react';
+import { Sparkles, Trophy, Brush, X } from 'lucide-react';
 import './App.css';
 
 function App() {
@@ -60,6 +60,7 @@ function App() {
   const [snackbarMsg, setSnackbarMsg] = useState(null);
   const [showEncounterSplash, setShowEncounterSplash] = useState(false);
   const [showQuickAdd, setShowQuickAdd] = useState(false);
+  const [showStats, setShowStats] = useState(false);
   const prevBossRef = React.useRef(null);
 
   const [hasOnboarded, setHasOnboarded] = useState(() => {
@@ -320,6 +321,39 @@ function App() {
       {!hasOnboarded && <Onboarding onComplete={handleOnboardingComplete} />}
       {!wispsCompleted && hasOnboarded && <WispsHunt onComplete={handleWispsComplete} />}
       {showQuickAdd && <QuickAdd onAdd={handleAddChore} onClose={() => setShowQuickAdd(false)} />}
+      
+      {showStats && (
+        <div className="quick-add-overlay" onClick={() => setShowStats(false)}>
+          <div className="glass-panel stats-modal animate-pop-in" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="retro-text">Trainer Profile</h3>
+              <button onClick={() => setShowStats(false)} className="close-btn-mini"><X size={20} /></button>
+            </div>
+            <div className="stats-list" style={{ padding: '1.5rem 0' }}>
+              <div className="stat-row">
+                <span className="stat-label">Current Buddy</span>
+                <span className="stat-value capitalize">{pokemonData?.name || '???'}</span>
+              </div>
+              <div className="stat-row">
+                <span className="stat-label">Trainer Rank</span>
+                <span className="stat-value">{userRank}-Star</span>
+              </div>
+              <div className="stat-row">
+                <span className="stat-label">Total XP</span>
+                <span className="stat-value">{trainerXp}</span>
+              </div>
+              <div className="stat-row">
+                <span className="stat-label">Buddy XP</span>
+                <span className="stat-value">{xp}</span>
+              </div>
+              <div className="stat-row">
+                <span className="stat-label">Badges Earned</span>
+                <span className="stat-value">{Math.floor(trainerXp / 1000)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showEncounterSplash && activeBoss && (
         <WildEncounterSplash bossData={activeBoss.data} />
@@ -331,7 +365,7 @@ function App() {
           <h1 className="retro-text title-gradient">PokeChore</h1>
         </div>
         
-        <div className="xp-container">
+        <div className="xp-container pointer" onClick={() => setShowStats(true)}>
           <Sparkles className="icon small gold" />
           <span className="xp-text">Total XP: {trainerXp}</span>
         </div>
@@ -389,35 +423,6 @@ function App() {
             loading={loading}
             evolving={evolving}
           />
-          
-          <div className="glass-panel stats-panel">
-            <div className="stats-header-with-avatar flex items-center gap-4 mb-4">
-              <div className="trainer-avatar-wrapper bg-black/30 p-2 rounded-full border border-white/10">
-                <img 
-                  src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/25.gif" 
-                  alt="Trainer Buddy" 
-                  className="w-12 h-12 object-contain"
-                />
-              </div>
-              <h3 className="retro-text stats-title m-0">Trainer Stats</h3>
-            </div>
-            <div className="stats-list">
-              <div className="stat-row">
-                <span className="stat-label">Current Buddy</span>
-                <span className="stat-value capitalize">
-                  {pokemonData?.name || '???'}
-                </span>
-              </div>
-              <div className="stat-row">
-                <span className="stat-label">Trainer Rank</span>
-                <span className="stat-value">{userRank}-Star</span>
-              </div>
-              <div className="stat-row">
-                <span className="stat-label">Buddy XP</span>
-                <span className="stat-value">{xp}</span>
-              </div>
-            </div>
-          </div>
           
           <CheckInCalendar checkIns={checkIns} />
         </div>
