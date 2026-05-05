@@ -1,6 +1,8 @@
 # PokeChore: A Self-Care Adventure 🎮✨
 
-![PokeChore Logo](./public/logo.png)
+<p align="center">
+  <img src="./public/logo.png" alt="PokeChore Logo" width="200" />
+</p>
 
 PokeChore is a gamified task and self-care tracker that turns your daily chores into a Pokémon-style RPG adventure. Level up your buddy, collect new Pokémon, and defeat bosses by completing your real-life tasks!
 
