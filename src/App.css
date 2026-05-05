@@ -109,14 +109,16 @@
 }
 
 .column {
-  display: none; /* Hidden by default on mobile */
+  display: none;
+  /* Hidden by default on mobile */
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
 }
 
 .column.mobile-active {
-  display: flex; /* Only active tab shows on mobile */
+  display: flex;
+  /* Only active tab shows on mobile */
   animation: slide-up 0.3s ease-out;
 }
 
@@ -130,7 +132,8 @@
   }
 
   .column {
-    display: flex !important; /* All columns visible on desktop */
+    display: flex !important;
+    /* All columns visible on desktop */
     height: auto;
   }
 }
@@ -184,8 +187,15 @@
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Component Styles */
