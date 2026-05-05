@@ -403,6 +403,14 @@ function App() {
                   { id: 6, name: 'Marsh', type: 'psychic', req: 3, color: '#f97316' },
                   { id: 7, name: 'Volcano', type: 'fire', req: 3, color: '#ef4444' },
                   { id: 8, name: 'Earth', type: 'ground', req: 3, color: '#16a34a' },
+                  { id: 9, name: 'Zephyr', type: 'flying', req: 5, color: '#8b9297' },
+                  { id: 10, name: 'Hive', type: 'bug', req: 5, color: '#91a119' },
+                  { id: 11, name: 'Plain', type: 'normal', req: 5, color: '#9099a1' },
+                  { id: 12, name: 'Fog', type: 'ghost', req: 5, color: '#5269ac' },
+                  { id: 13, name: 'Storm', type: 'fighting', req: 5, color: '#ce4069' },
+                  { id: 14, name: 'Mineral', type: 'steel', req: 5, color: '#5a8ea1' },
+                  { id: 15, name: 'Glacier', type: 'ice', req: 5, color: '#74cec0' },
+                  { id: 16, name: 'Rising', type: 'dragon', req: 5, color: '#096dc4' },
                 ].map(badge => {
                   const currentCount = collection.filter(p => p.types?.includes(badge.type)).length;
                   const earned = currentCount >= badge.req;
@@ -414,7 +422,12 @@ function App() {
                       style={{ '--badge-color': badge.color }}
                       title={earned ? `${badge.name} Badge` : `Need ${badge.req} ${badge.type}-type Pokémon (${currentCount}/${badge.req})`}
                     >
-                      <Trophy className="badge-icon" />
+                      <img 
+                        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${badge.name.toLowerCase()}-badge.png`}
+                        alt={badge.name}
+                        className="badge-image"
+                        style={{ filter: earned ? 'none' : 'grayscale(1) brightness(0.5)' }}
+                      />
                       <span className="badge-name-tooltip">{badge.name}</span>
                     </div>
                   );
