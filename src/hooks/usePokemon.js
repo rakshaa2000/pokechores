@@ -18,7 +18,8 @@ export function usePokemon() {
   const [pokemonId, setPokemonId] = useState(() => {
     const saved = localStorage.getItem('poke_id');
     if (saved) return parseInt(saved, 10);
-    return STARTER_IDS[Math.floor(Math.random() * STARTER_IDS.length)];
+    // Default to Bulbasaur; onboarding will override with the user's chosen starter
+    return 1;
   });
   
   const [totalTrainerXp, setTotalTrainerXp] = useState(() => {
@@ -199,6 +200,19 @@ export function usePokemon() {
 
   const changeBuddy = (id) => {
     setPokemonId(id);
+    // If the user just onboarded (collection only has the default placeholder),
+    // replace the placeholder entry with their chosen starter
+    setCollection(prev => {
+      if (prev.length === 1 && !localStorage.getItem('poke_onboarded_buddy_set')) {
+        localStorage.setItem('poke_onboarded_buddy_set', 'true');
+        return [{ id, xp: 0 }];
+      }
+      // If the new buddy isn't in the collection yet, add it
+      if (!prev.some(p => p.id === id)) {
+        return [...prev, { id, xp: 0 }];
+      }
+      return prev;
+    });
   };
 
   return {
