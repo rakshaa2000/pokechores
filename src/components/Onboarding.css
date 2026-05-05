@@ -27,7 +27,7 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-.oak-container {
+.guide-container {
   width: 150px;
   height: 150px;
   background: rgba(255, 255, 255, 0.5);
@@ -39,11 +39,11 @@
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
 }
 
-.oak-sprite {
+.guide-sprite {
   width: 120px;
   height: 120px;
   object-fit: contain;
-  /* Using Eevee as placeholder for Oak/Guide */
+  /* Eevee Guide Image */
 }
 
 .dialog-box {

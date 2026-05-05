@@ -7,7 +7,7 @@ export default function Onboarding({ onComplete }) {
 
   const questions = [
     {
-      text: "Hello there! Welcome to the world of tasks! My name is Oak. People call me the Task Professor.",
+      text: "Vee-vee! Welcome to the world of tasks! I'm Eevee, your productivity partner.",
       options: ["Next"]
     },
     {
@@ -24,7 +24,7 @@ export default function Onboarding({ onComplete }) {
 
   const handleOptionClick = (option) => {
     const currentQ = questions[step];
-    
+
     if (currentQ.field) {
       setAnswers(prev => ({ ...prev, [currentQ.field]: option }));
     }
@@ -35,7 +35,7 @@ export default function Onboarding({ onComplete }) {
       // Auto-assign random starter ID since the question was removed
       const starterIds = [1, 4, 7]; // Bulbasaur, Charmander, Squirtle
       const starterId = starterIds[Math.floor(Math.random() * starterIds.length)];
-      
+
       onComplete({ ...answers, starterId });
     }
   };
@@ -45,20 +45,20 @@ export default function Onboarding({ onComplete }) {
   return (
     <div className="onboarding-overlay">
       <div className="onboarding-modal glass-panel">
-        <div className="oak-container">
-          <img 
-            src="/logo.png" 
-            alt="PokeChore Logo" 
-            className="oak-sprite"
+        <div className="guide-container">
+          <img
+            src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png"
+            alt="Eevee Guide"
+            className="guide-sprite"
           />
         </div>
-        
+
         <div className="dialog-box">
           <p className="dialog-text retro-text">{currentQ.text}</p>
-          
+
           <div className="options-container">
             {currentQ.options.map(opt => (
-              <button 
+              <button
                 key={opt}
                 className="dialog-option"
                 onClick={() => handleOptionClick(opt)}
