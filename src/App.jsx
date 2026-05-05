@@ -439,7 +439,7 @@ function App() {
 
       <header className="app-header">
         <div className="logo-container">
-          <img src="/logo.png" alt="PokeChore Logo" className="app-logo" />
+          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="PokeChore Logo" className="app-logo" />
           <h1 className="retro-text title-gradient">PokeChore</h1>
         </div>
 
