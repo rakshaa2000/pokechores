@@ -19,11 +19,6 @@ export default function Onboarding({ onComplete }) {
       text: "And what do you struggle with the most?",
       field: "struggle",
       options: ["Procrastination", "Forgetting", "Overworking"]
-    },
-    {
-      text: "Fascinating! Now, choose your starter companion to help you on your journey!",
-      field: "starter",
-      options: ["Bulbasaur (Steady)", "Charmander (Fierce)", "Squirtle (Flowing)"]
     }
   ];
 
@@ -37,9 +32,9 @@ export default function Onboarding({ onComplete }) {
     if (step < questions.length - 1) {
       setStep(step + 1);
     } else {
-      let starterId = 1; // Bulbasaur
-      if (answers.starter.includes("Charmander") || option.includes("Charmander")) starterId = 4;
-      if (answers.starter.includes("Squirtle") || option.includes("Squirtle")) starterId = 7;
+      // Auto-assign random starter ID since the question was removed
+      const starterIds = [1, 4, 7]; // Bulbasaur, Charmander, Squirtle
+      const starterId = starterIds[Math.floor(Math.random() * starterIds.length)];
       
       onComplete({ ...answers, starterId });
     }
@@ -52,8 +47,8 @@ export default function Onboarding({ onComplete }) {
       <div className="onboarding-modal glass-panel">
         <div className="oak-container">
           <img 
-            src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png" 
-            alt="Professor Oak" 
+            src="/logo.png" 
+            alt="PokeChore Logo" 
             className="oak-sprite"
           />
         </div>

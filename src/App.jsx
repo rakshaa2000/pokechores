@@ -414,7 +414,7 @@ function App() {
                       style={{ '--badge-color': badge.color }}
                       title={earned ? `${badge.name} Badge` : `Need ${badge.req} ${badge.type}-type Pokémon (${currentCount}/${badge.req})`}
                     >
-                      <Trophy size={16} />
+                      <Trophy className="badge-icon" />
                       <span className="badge-name-tooltip">{badge.name}</span>
                     </div>
                   );
@@ -431,7 +431,7 @@ function App() {
 
       <header className="app-header">
         <div className="logo-container">
-          <span className="app-logo-emoji">🧹</span>
+          <img src="/logo.png" alt="PokeChore Logo" className="app-logo" />
           <h1 className="retro-text title-gradient">PokeChore</h1>
         </div>
 
