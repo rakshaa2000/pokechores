@@ -32,8 +32,18 @@ export default function Onboarding({ onComplete }) {
     if (step < questions.length - 1) {
       setStep(step + 1);
     } else {
-      // Auto-assign random starter ID since the question was removed
-      const starterIds = [1, 4, 7]; // Bulbasaur, Charmander, Squirtle
+      // Pick a random starter from any generation (Gen 1-9)
+      const starterIds = [
+        1, 4, 7,       // Gen 1
+        152, 155, 158,  // Gen 2
+        252, 255, 258,  // Gen 3
+        387, 390, 393,  // Gen 4
+        495, 498, 501,  // Gen 5
+        650, 653, 656,  // Gen 6
+        722, 725, 728,  // Gen 7
+        810, 813, 816,  // Gen 8
+        906, 909, 912,  // Gen 9
+      ];
       const starterId = starterIds[Math.floor(Math.random() * starterIds.length)];
 
       onComplete({ ...answers, starterId });
