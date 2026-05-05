@@ -460,7 +460,7 @@ function App() {
           onClick={() => setMobileTab('hq')}
         >
           <img
-            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/${pokemonId}.gif`}
+            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`}
             alt="HQ"
             className="mobile-tab-buddy"
           />

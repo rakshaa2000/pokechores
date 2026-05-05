@@ -18,8 +18,9 @@ export default function ActivePokemon({ pokemonData, level, xp, nextLevelXp, act
   const primaryType = pokemonData.types[0].type.name;
   const typeColorVar = `var(--type-${primaryType}, var(--type-normal))`;
   
-  // Use animated sprite if available, otherwise fallback to official artwork or default sprite
-  const spriteUrl = pokemonData.sprites.versions['generation-v']['black-white'].animated.front_default 
+  // Use animated sprite if available (Gen 1-5), then official artwork, then default sprite
+  const spriteUrl = pokemonData.sprites.versions?.['generation-v']?.['black-white']?.animated?.front_default 
+                 || pokemonData.sprites.other?.['official-artwork']?.front_default
                  || pokemonData.sprites.front_default;
 
   return (
